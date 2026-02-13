@@ -1,88 +1,106 @@
-<div class="container">
-  <header>
-    <h1>🚗 Frota da Oficina</h1>
-    <p>Visualizando todos os veículos cadastrados.</p>
-  </header>
+<div class="page-container">
+  <div class="page-toolbar">
+    <div class="toolbar-left">
+      <h1>Frota de Veículos</h1>
+      <p>Gerencie os carros cadastrados na oficina.</p>
+    </div>
+    <div class="toolbar-actions">
+      <div class="search-box">
+        <span class="icon">🔍</span>
+        <input type="text" [(ngModel)]="termoBusca" (input)="filtrarVeiculos()" placeholder="Buscar placa, modelo ou dono..." />
+      </div>
+      <button class="btn-primary" (click)="abrirModalCadastro()">
+        <span class="icon">+</span> Novo Veículo
+      </button>
+    </div>
+  </div>
 
-  <div class="card-table">
-    <table>
-      <thead>
-        <tr>
-          <th>Veículo</th>
-          <th>Placa</th>
-          <th>Cor</th>
-          <th>Dono</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let v of listaVeiculos">
-          <td>
-            <strong>{{ v.marca }}</strong> {{ v.modelo }}
-          </td>
-          <td>
-            <span class="placa-badge">{{ v.placa }}</span>
-          </td>
-          <td>{{ v.cor }}</td>
-          <td>{{ v.cliente?.nome || 'Sem Dono' }}</td>
-          <td>
-            <button class="btn-os" (click)="abrirOS(v)">🛠️</button>
+  <div class="content-area">
+    <div class="card-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Veículo</th>
+            <th>Placa</th>
+            <th>Cor</th>
+            <th>Dono (Cliente)</th>
+            <th class="text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let v of listaVeiculos">
+            <td class="fw-bold">{{ v.modelo }} <small class="text-muted">({{ v.ano }})</small></td>
+            <td><span class="badge-placa">{{ v.placa }}</span></td>
+            <td>{{ v.cor }}</td>
+            <td>{{ v.cliente?.nome || '---' }}</td>
+            <td class="actions-cell">
+              <button class="btn-icon edit" (click)="abrirModalEdicao(v)">✏️</button>
+              <button class="btn-icon delete" (click)="excluirVeiculo(v.id)">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-            <button
-              class="btn-editar"
-              (click)="abrirModalEdicao(v)"
-              style="
-                margin-left: 5px;
-                background: orange;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-              "
-            >
-              ✏️
-            </button>
+<div class="modal-overlay" *ngIf="modalCadastroAberto">
+  <div class="modal-papel modal-cadastro">
+    <div class="modal-header">
+      <h2>Novo Veículo</h2>
+      <button class="btn-fechar" (click)="fecharModalCadastro()">✖</button>
+    </div>
+    <div class="form-grid">
+      <div class="grupo-form full-width">
+        <label>Dono do Carro *</label>
+        <select [(ngModel)]="dadosNovoVeiculo.clienteId" class="input-padrao">
+          <option [ngValue]="null">Selecione o cliente...</option>
+          <option *ngFor="let c of listaClientes" [ngValue]="c.id">{{ c.nome }} ({{ c.documento }})</option>
+        </select>
+      </div>
+      <div class="grupo-form">
+        <label>Marca</label>
+        <input type="text" [(ngModel)]="dadosNovoVeiculo.marca" class="input-padrao" placeholder="Honda">
+      </div>
+      <div class="grupo-form">
+        <label>Modelo</label>
+        <input type="text" [(ngModel)]="dadosNovoVeiculo.modelo" class="input-padrao" placeholder="Civic">
+      </div>
+      <div class="grupo-form">
+        <label>Placa *</label>
+        <input type="text" [(ngModel)]="dadosNovoVeiculo.placa" class="input-padrao" placeholder="ABC-1234">
+      </div>
+      <div class="grupo-form">
+        <label>Cor</label>
+        <input type="text" [(ngModel)]="dadosNovoVeiculo.cor" class="input-padrao">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancelar" (click)="fecharModalCadastro()">Cancelar</button>
+      <button class="btn-salvar" (click)="salvarNovoVeiculo()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
 
-            <button
-              class="btn-excluir"
-              (click)="excluirVeiculo(v.id)"
-              style="margin-left: 5px; cursor: pointer"
-            >
-              🗑️
-            </button>
-          </td>
-        </tr>
-        <div class="modal-overlay" *ngIf="modalAberto">
-          <div class="modal-box">
-            <h2>Editar Veículo</h2>
-
-            <label>Marca</label>
-            <input type="text" [(ngModel)]="veiculoEmEdicao.marca" />
-
-            <label>Modelo</label>
-            <input type="text" [(ngModel)]="veiculoEmEdicao.modelo" />
-
-            <label>Placa</label>
-            <input type="text" [(ngModel)]="veiculoEmEdicao.placa" />
-
-            <label>Cor</label>
-            <input type="text" [(ngModel)]="veiculoEmEdicao.cor" />
-
-            <div
-              class="modal-actions"
-              style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end"
-            >
-              <button (click)="fecharModal()">Cancelar</button>
-              <button (click)="salvarEdicao()" style="background: green; color: white">
-                Salvar
-              </button>
-            </div>
-          </div>
-        </div>
-      </tbody>
-    </table>
-
-    <div *ngIf="listaVeiculos.length === 0" class="empty-state">
-      Nenhum veículo na oficina ainda. Vá em Clientes para cadastrar.
+<div class="modal-overlay" *ngIf="modalEdicaoAberto">
+  <div class="modal-papel modal-cadastro">
+    <div class="modal-header">
+      <h2>Editar Veículo</h2>
+      <button class="btn-fechar" (click)="fecharModalEdicao()">✖</button>
+    </div>
+    <div class="form-grid">
+      <div class="grupo-form full-width">
+        <label>Dono</label>
+        <select [(ngModel)]="veiculoEmEdicao.clienteId" class="input-padrao">
+          <option *ngFor="let c of listaClientes" [ngValue]="c.id">{{ c.nome }}</option>
+        </select>
+      </div>
+      <div class="grupo-form"><label>Modelo</label><input [(ngModel)]="veiculoEmEdicao.modelo" class="input-padrao"></div>
+      <div class="grupo-form"><label>Placa</label><input [(ngModel)]="veiculoEmEdicao.placa" class="input-padrao"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancelar" (click)="fecharModalEdicao()">Cancelar</button>
+      <button class="btn-salvar" (click)="salvarEdicao()">🔄 Atualizar</button>
     </div>
   </div>
 </div>

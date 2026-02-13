@@ -3,34 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-// --- INTERFACES ---
-export interface ItemPeca {
-  id: number;
-  nomePeca: string;
-  qtd: number;
-  valorUn: number;
-  subtotal: number;
-}
-export interface ItemServico {
-  id: number;
-  descricao: string;
-  valor: number;
-  nomeMecanico: string;
-}
+export interface ItemPeca { id: number; nomePeca: string; qtd: number; valorUn: number; subtotal: number; }
+export interface ItemServico { id: number; descricao: string; valor: number; nomeMecanico: string; }
 export interface OrdemServico {
-  id: number;
-  clienteId: number;
-  nomeCliente: string;
-  modeloVeiculo: string;
-  placaVeiculo: string;
-  defeitoRelatado: string;
-  status: string;
-  dataAbertura: string;
-  totalPecas: number;
-  totalServicos: number;
-  totalGeral: number;
-  pecas: ItemPeca[];
-  servicos: ItemServico[];
+  id: number; clienteId: number; nomeCliente: string; modeloVeiculo: string; placaVeiculo: string;
+  defeitoRelatado: string; status: string; dataAbertura: string;
+  totalPecas: number; totalServicos: number; totalGeral: number;
+  pecas: ItemPeca[]; servicos: ItemServico[];
 }
 
 @Component({
@@ -41,25 +20,44 @@ export interface OrdemServico {
   styleUrls: ['./ordens-servico.scss'],
 })
 export class OrdensServicoComponent implements OnInit {
-  // --- VARIÁVEIS PRINCIPAIS ---
   listaOS: OrdemServico[] = [];
   osSelecionada: OrdemServico | null = null;
   modalAberto = false;
   termoBusca: string = '';
   listaTodasOS: OrdemServico[] = [];
 
-  // --- VARIÁVEIS DE NOVA O.S. ---
-  listaVeiculos: any[] = [];
+  // --- WIZARD NOVA OS ---
   modalNovaOSAberto = false;
+  passoAtual = 1;
+  modoExpress = false; // ⚡ NOVO: Controla se é modo rápido ou busca
+  termoBuscaCliente = '';
+  listaClientesEncontrados: any[] = [];
+  clienteSelecionado: any = null;
+  listaVeiculosDoCliente: any[] = [];
   dadosNovaOS = { veiculoId: null, defeitoRelatado: '' };
+  buscando = false;
+  timeoutBusca: any;
 
-  // 👇 NOVAS VARIÁVEIS (PARA ADICIONAR ITENS)
+  // --- MODO EXPRESS (DADOS) ---
+  dadosExpress = {
+    nomeCliente: '',
+    telefone: '',
+    marca: 'Genérica',
+    modelo: '',
+    placa: '',
+    cor: '',
+    defeito: ''
+  };
+
+  // --- CADASTRO RÁPIDO DE VEÍCULO (NO PASSO 2) ---
+  exibirFormVeiculo = false;
+  novoVeiculoRapido = { marca: '', modelo: '', placa: '', cor: '', ano: 2025 };
+
+  // --- ITENS ---
   listaMecanicos: any[] = [];
   listaProdutos: any[] = [];
-
   modalAddServicoAberto = false;
   dadosServico = { descricao: '', valor: 0, mecanicoId: null };
-
   modalAddPecaAberto = false;
   dadosPeca = { produtoId: null, quantidade: 1 };
 
@@ -69,9 +67,8 @@ export class OrdensServicoComponent implements OnInit {
     this.carregarOS();
   }
 
-  // --- CARREGAMENTOS ---
   carregarOS() {
-    this.http.get<OrdemServico[]>('http://localhost:8080/os').subscribe({
+    this.http.get<OrdemServico[]>('http://127.0.0.1:8080/os').subscribe({
       next: (dados) => {
         this.listaOS = dados;
         this.listaTodasOS = dados;
@@ -81,146 +78,186 @@ export class OrdensServicoComponent implements OnInit {
     });
   }
 
-  carregarVeiculos() {
-    this.http.get<any[]>('http://localhost:8080/veiculos').subscribe({
-      next: (d) => (this.listaVeiculos = d),
-    });
-  }
+  // --- LOGICA DE NOVA OS ---
 
-  //  BUSCAR MECÂNICOS E PRODUTOS DO BANCO
-  carregarAuxiliares() {
-    this.http
-      .get<any[]>('http://localhost:8080/mecanicos')
-      .subscribe((d) => (this.listaMecanicos = d));
-    this.http
-      .get<any[]>('http://localhost:8080/produtos')
-      .subscribe((d) => (this.listaProdutos = d));
-  }
-
-  // --- MODAL DETALHES ---
-  abrirModalDetalhes(os: OrdemServico) {
-    this.osSelecionada = os;
-    this.modalAberto = true;
-    this.carregarAuxiliares(); //  Já carrega as listas pra estarem prontas se precisar
-  }
-
-  fecharModal() {
-    this.modalAberto = false;
-    this.osSelecionada = null;
-  }
-
-  // --- ADICIONAR SERVIÇO (COM MECÂNICO!) ---
-  abrirModalServico() {
-    this.modalAddServicoAberto = true;
-  }
-  fecharModalServico() {
-    this.modalAddServicoAberto = false;
-    this.dadosServico = { descricao: '', valor: 0, mecanicoId: null }; // Limpa
-  }
-
-  salvarServico() {
-    if (!this.osSelecionada) return;
-
-    // Validação simples
-    if (!this.dadosServico.descricao || !this.dadosServico.mecanicoId) {
-      alert('Preencha a descrição e escolha o mecânico!');
-      return;
-    }
-
-    const url = `http://localhost:8080/os/${this.osSelecionada.id}/servicos`;
-    this.http.post(url, this.dadosServico).subscribe({
-      next: (osAtualizada: any) => {
-        alert('Serviço adicionado!');
-        this.osSelecionada = osAtualizada; // Atualiza o modal aberto com os novos totais
-        this.carregarOS(); // Atualiza a lista lá atrás
-        this.fecharModalServico();
-      },
-      error: (e) => alert('Erro ao salvar serviço.'),
-    });
-  }
-
-  // --- ADICIONAR PEÇA ---
-  abrirModalPeca() {
-    this.modalAddPecaAberto = true;
-  }
-  fecharModalPeca() {
-    this.modalAddPecaAberto = false;
-    this.dadosPeca = { produtoId: null, quantidade: 1 };
-  }
-
-  salvarPeca() {
-    if (!this.osSelecionada) return;
-
-    if (!this.dadosPeca.produtoId || this.dadosPeca.quantidade < 1) {
-      alert('Escolha o produto e uma quantidade válida.');
-      return;
-    }
-
-    const url = `http://localhost:8080/os/${this.osSelecionada.id}/itens`;
-    this.http.post(url, this.dadosPeca).subscribe({
-      next: (osAtualizada: any) => {
-        alert('Peça adicionada!');
-        this.osSelecionada = osAtualizada;
-        this.carregarOS();
-        this.fecharModalPeca();
-      },
-      error: (e) => alert('Erro ao adicionar peça. Verifique o estoque.'),
-    });
-  }
-
-  // --- RESTO DO CÓDIGO (Nova OS, Delete, Print, Filter...) ---
   abrirModalNovaOS() {
     this.modalNovaOSAberto = true;
-    this.carregarVeiculos();
+    this.reiniciarFluxoNovaOS();
   }
-  fecharModalNovaOS() {
-    this.modalNovaOSAberto = false;
+  fecharModalNovaOS() { this.modalNovaOSAberto = false; }
+
+  reiniciarFluxoNovaOS() {
+    this.passoAtual = 1;
+    this.modoExpress = false;
+    this.termoBuscaCliente = '';
+    this.listaClientesEncontrados = [];
+    this.clienteSelecionado = null;
+    this.listaVeiculosDoCliente = [];
     this.dadosNovaOS = { veiculoId: null, defeitoRelatado: '' };
+    this.exibirFormVeiculo = false;
+    this.dadosExpress = { nomeCliente: '', telefone: '', marca: '', modelo: '', placa: '', cor: '', defeito: '' };
   }
-  salvarNovaOS() {
-    if (!this.dadosNovaOS.veiculoId || !this.dadosNovaOS.defeitoRelatado) {
-      alert('Preencha tudo!');
+
+  // --- MODO EXPRESS (NOVO) ---
+  ativarModoExpress() {
+    this.modoExpress = true;
+  }
+  cancelarExpress() {
+    this.modoExpress = false;
+  }
+
+  salvarOSExpress() {
+    // Validação
+    if (!this.dadosExpress.nomeCliente || !this.dadosExpress.placa || !this.dadosExpress.defeito) {
+      alert('Preencha Nome, Placa e Defeito!');
       return;
     }
-    this.http.post('http://localhost:8080/os', this.dadosNovaOS).subscribe({
+
+    // Monta o objeto igual ao backend espera (DadosAberturaOS)
+    const payload = {
+      veiculoId: null, // Null avisa o Java que é cadastro novo
+      defeitoRelatado: this.dadosExpress.defeito,
+      novoCliente: {
+        nome: this.dadosExpress.nomeCliente,
+        telefone: this.dadosExpress.telefone || 'Sem telefone',
+        documento: '00000000000', // CPF Genérico
+        email: ''
+      },
+      novoVeiculo: {
+        marca: this.dadosExpress.marca || 'Genérica',
+        modelo: this.dadosExpress.modelo,
+        placa: this.dadosExpress.placa,
+        cor: this.dadosExpress.cor,
+        ano: 2025,
+        clienteId: null // O backend resolve a relação
+      }
+    };
+
+    this.http.post('http://127.0.0.1:8080/os', payload).subscribe({
       next: () => {
-        alert('Sucesso!');
+        alert('⚡ O.S. Express criada com sucesso!');
         this.fecharModalNovaOS();
         this.carregarOS();
       },
-      error: () => alert('Erro ao criar.'),
+      error: (e) => {
+        console.error(e);
+        alert('Erro ao criar. Verifique se a placa já existe!');
+      }
     });
   }
 
-  imprimirOS() {
-    window.print();
+  // --- MODO CLÁSSICO (BUSCA) ---
+  buscarComDelay() {
+    clearTimeout(this.timeoutBusca);
+    this.timeoutBusca = setTimeout(() => {
+      if (this.termoBuscaCliente.length >= 3) this.buscarCliente();
+    }, 200);
   }
 
-  deletarOS(id: number) {
-    if (confirm(`Excluir OS #${id}?`)) {
-      this.http.delete(`http://localhost:8080/os/${id}`).subscribe({
-        next: () => this.carregarOS(),
-        error: () => alert('Erro ao excluir.'),
+  buscarCliente() {
+    this.buscando = true;
+    this.http.get<any[]>(`http://127.0.0.1:8080/clientes?busca=${this.termoBuscaCliente}`)
+      .subscribe({
+        next: (res) => { this.listaClientesEncontrados = res; this.buscando = false; },
+        error: () => { this.buscando = false; }
       });
-    }
   }
 
-  filtrarOS() {
-    // 1. Se a busca estiver vazia, restaura a lista completa original
-    if (!this.termoBusca) {
-      this.listaOS = [...this.listaTodasOS];
+  selecionarCliente(cliente: any) {
+    this.clienteSelecionado = cliente;
+    this.buscando = true;
+    this.http.get<any[]>(`http://127.0.0.1:8080/veiculos?clienteId=${cliente.id}`)
+      .subscribe({
+        next: (res) => {
+          this.listaVeiculosDoCliente = res;
+          this.passoAtual = 2;
+          this.buscando = false;
+        },
+        error: () => this.buscando = false
+      });
+  }
+
+  voltarParaBusca() {
+    this.passoAtual = 1;
+    this.dadosNovaOS.veiculoId = null;
+  }
+
+  toggleFormVeiculo() {
+    this.exibirFormVeiculo = !this.exibirFormVeiculo;
+    this.novoVeiculoRapido = { marca: '', modelo: '', placa: '', cor: '', ano: 2025 };
+  }
+
+  salvarVeiculoRapido() {
+    if (!this.clienteSelecionado) return;
+    if (!this.novoVeiculoRapido.modelo || !this.novoVeiculoRapido.placa) {
+      alert('Preencha Modelo e Placa!');
       return;
     }
+    const payload = { ...this.novoVeiculoRapido, clienteId: this.clienteSelecionado.id };
+    this.http.post('http://127.0.0.1:8080/veiculos', payload).subscribe({
+      next: () => {
+        alert('Carro cadastrado!');
+        this.exibirFormVeiculo = false;
+        this.selecionarCliente(this.clienteSelecionado);
+      },
+      error: () => alert('Erro ao cadastrar carro.')
+    });
+  }
 
-    // 2. Transforma o texto em minúsculo para facilitar a comparação
-    const termo = this.termoBusca.toLowerCase();
+  salvarNovaOS() {
+    if (!this.dadosNovaOS.veiculoId || !this.dadosNovaOS.defeitoRelatado) {
+      alert('Selecione o veículo e descreva o defeito!');
+      return;
+    }
+    this.http.post('http://127.0.0.1:8080/os', this.dadosNovaOS).subscribe({
+      next: () => {
+        alert('🚀 O.S. Aberta!');
+        this.fecharModalNovaOS();
+        this.carregarOS();
+      },
+      error: () => alert('Erro ao criar O.S.'),
+    });
+  }
 
-    // 3. Filtra usando o backup como base
-    this.listaOS = this.listaTodasOS.filter(
-      (os) =>
-        os.nomeCliente.toLowerCase().includes(termo) ||
-        os.placaVeiculo.toLowerCase().includes(termo) ||
-        os.id.toString().includes(termo)
-    );
+  // --- DETALHES, ITENS E IMPRESSÃO ---
+  carregarAuxiliares() {
+    this.http.get<any[]>('http://127.0.0.1:8080/mecanicos').subscribe((d) => (this.listaMecanicos = d));
+    this.http.get<any[]>('http://127.0.0.1:8080/produtos').subscribe((d) => (this.listaProdutos = d));
+  }
+
+  abrirModalDetalhes(os: OrdemServico) {
+    this.osSelecionada = os;
+    this.modalAberto = true;
+    this.carregarAuxiliares();
+  }
+  fecharModal() { this.modalAberto = false; this.osSelecionada = null; }
+
+  abrirModalServico() { this.modalAddServicoAberto = true; }
+  fecharModalServico() { this.modalAddServicoAberto = false; this.dadosServico = { descricao: '', valor: 0, mecanicoId: null }; }
+  salvarServico() {
+    if (!this.osSelecionada) return;
+    this.http.post(`http://127.0.0.1:8080/os/${this.osSelecionada.id}/servicos`, this.dadosServico).subscribe({
+      next: (os: any) => { this.osSelecionada = os; this.carregarOS(); this.fecharModalServico(); }
+    });
+  }
+
+  abrirModalPeca() { this.modalAddPecaAberto = true; }
+  fecharModalPeca() { this.modalAddPecaAberto = false; this.dadosPeca = { produtoId: null, quantidade: 1 }; }
+  salvarPeca() {
+    if (!this.osSelecionada) return;
+    this.http.post(`http://127.0.0.1:8080/os/${this.osSelecionada.id}/itens`, this.dadosPeca).subscribe({
+      next: (os: any) => { this.osSelecionada = os; this.carregarOS(); this.fecharModalPeca(); },
+      error: () => alert('Erro: Estoque insuficiente?')
+    });
+  }
+
+  imprimirOS() { window.print(); }
+  deletarOS(id: number) {
+    if(confirm('Excluir?')) this.http.delete(`http://127.0.0.1:8080/os/${id}`).subscribe(() => this.carregarOS());
+  }
+  filtrarOS() {
+    if (!this.termoBusca) { this.listaOS = [...this.listaTodasOS]; return; }
+    const t = this.termoBusca.toLowerCase();
+    this.listaOS = this.listaTodasOS.filter(o => o.nomeCliente.toLowerCase().includes(t) || o.placaVeiculo.toLowerCase().includes(t));
   }
 }

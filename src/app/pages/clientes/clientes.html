@@ -1,56 +1,124 @@
-<div class="container">
-  <header>
-    <h1>👥 Gerenciar Clientes</h1>
-    <button class="btn-novo">Novo Cliente</button>
-  </header>
+<div class="page-container">
+  <div class="page-toolbar">
+    <div class="toolbar-left">
+      <h1>Gerenciar Clientes</h1>
+      <p>Cadastre e edite os dados dos seus clientes.</p>
+    </div>
 
-  <div class="card-table">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nome</th>
-          <th>Telefone</th>
-          <th>Email</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let c of listaClientes">
-          <td>#{{ c.id }}</td>
-          <td>{{ c.nome }}</td>
-          <td>{{ c.telefone }}</td>
-          <td>{{ c.email }}</td>
-          <td>
-            <button class="btn-acao btn-editar" (click)="abrirModal(c)">✏️</button>
+    <div class="toolbar-actions">
+      <div class="search-box">
+        <span class="icon">🔍</span>
+        <input 
+          type="text" 
+          [(ngModel)]="termoBusca" 
+          (input)="filtrarClientes()"
+          placeholder="Buscar por nome ou CPF..." 
+        />
+      </div>
 
-            <button class="btn-acao btn-excluir" (click)="excluirCliente(c.id)">🗑️</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <button class="btn-primary" (click)="abrirModalCadastro()">
+        <span class="icon">+</span> Novo Cliente
+      </button>
+    </div>
+  </div>
+
+  <div class="content-area">
+    <div class="card-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Documento (CPF/CNPJ)</th>
+            <th>Telefone</th>
+            <th>Email</th>
+            <th class="text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cliente of listaClientes">
+            <td class="fw-bold">{{ cliente.nome }}</td>
+            <td>{{ cliente.documento || '---' }}</td>
+            <td>{{ cliente.telefone }}</td>
+            <td>{{ cliente.email || '---' }}</td>
+            <td class="actions-cell">
+              <button class="btn-icon edit" (click)="abrirModal(cliente)" title="Editar">✏️</button>
+              <button class="btn-icon delete" (click)="excluirCliente(cliente.id)" title="Excluir">🗑️</button>
+            </td>
+          </tr>
+          <tr *ngIf="listaClientes.length === 0">
+            <td colspan="5" class="text-center p-4 text-muted">Nenhum cliente encontrado.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="modalCadastroAberto">
+  <div class="modal-papel modal-cadastro">
+    <div class="modal-header">
+      <h2>Novo Cliente</h2>
+      <button class="btn-fechar" (click)="fecharModalCadastro()">✖</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="grupo-form full-width">
+        <label>Nome Completo *</label>
+        <input type="text" [(ngModel)]="dadosNovoCliente.nome" class="input-padrao" placeholder="Ex: João da Silva" autofocus>
+      </div>
+
+      <div class="grupo-form">
+        <label>CPF ou CNPJ</label>
+        <input type="text" [(ngModel)]="dadosNovoCliente.documento" class="input-padrao" placeholder="Apenas números">
+      </div>
+
+      <div class="grupo-form">
+        <label>Telefone / WhatsApp *</label>
+        <input type="text" [(ngModel)]="dadosNovoCliente.telefone" class="input-padrao" placeholder="(45) 99999-9999">
+      </div>
+
+      <div class="grupo-form full-width">
+        <label>Email (Opcional)</label>
+        <input type="email" [(ngModel)]="dadosNovoCliente.email" class="input-padrao" placeholder="cliente@email.com">
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancelar" (click)="fecharModalCadastro()">Cancelar</button>
+      <button class="btn-salvar" (click)="salvarNovoCliente()">💾 Salvar Cliente</button>
+    </div>
   </div>
 </div>
 
 <div class="modal-overlay" *ngIf="modalAberto">
-  <div class="modal-box">
-    <h2>Editar Cliente</h2>
+  <div class="modal-papel modal-cadastro">
+    <div class="modal-header">
+      <h2>Editar Cliente</h2>
+      <button class="btn-fechar" (click)="fecharModal()">✖</button>
+    </div>
 
-    <label>Nome</label>
-    <input type="text" [(ngModel)]="clienteEmEdicao.nome" />
-
-    <label>Telefone</label>
-    <input type="text" [(ngModel)]="clienteEmEdicao.telefone" />
-
-    <label>Email</label>
-    <input type="text" [(ngModel)]="clienteEmEdicao.email" />
-
-    <label>Documento (CPF/CNPJ)</label>
-    <input type="text" [(ngModel)]="clienteEmEdicao.documento" />
+    <div class="form-grid">
+      <div class="grupo-form full-width">
+        <label>Nome</label>
+        <input type="text" [(ngModel)]="clienteEmEdicao.nome" class="input-padrao">
+      </div>
+      <div class="grupo-form">
+        <label>Documento</label>
+        <input type="text" [(ngModel)]="clienteEmEdicao.documento" class="input-padrao">
+      </div>
+      <div class="grupo-form">
+        <label>Telefone</label>
+        <input type="text" [(ngModel)]="clienteEmEdicao.telefone" class="input-padrao">
+      </div>
+      <div class="grupo-form full-width">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="clienteEmEdicao.email" class="input-padrao">
+      </div>
+    </div>
 
     <div class="modal-actions">
       <button class="btn-cancelar" (click)="fecharModal()">Cancelar</button>
-      <button class="btn-salvar" (click)="salvarEdicao()">Salvar</button>
+      <button class="btn-salvar" (click)="salvarEdicao()">🔄 Atualizar</button>
     </div>
   </div>
 </div>

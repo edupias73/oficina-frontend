@@ -55,15 +55,11 @@
               </span>
             </td>
             <td class="fw-bold">{{ os.nomeCliente }}</td>
-
             <td>
               {{ os.modeloVeiculo }} <small class="placa">{{ os.placaVeiculo }}</small>
             </td>
-
             <td>{{ os.dataAbertura | date : 'dd/MM/yyyy' }}</td>
-
             <td class="valor">R$ {{ os.totalGeral | number : '1.2-2' }}</td>
-
             <td class="actions-cell">
               <button class="btn-icon view" (click)="abrirModalDetalhes(os)" title="Ver">👁️</button>
               <button class="btn-icon delete" (click)="deletarOS(os.id)" title="Excluir">🗑️</button>
@@ -75,110 +71,183 @@
   </div>
 </div>
 
-<div class="modal-overlay" *ngIf="modalAberto && osSelecionada">
-  <div class="modal-papel">
-    <div class="print-header-only">
-      <h1>NITROGESTOR</h1>
-      <p>Relatório Técnico de Serviço</p>
+<div class="modal-overlay" *ngIf="modalNovaOSAberto" style="z-index: 1050;">
+  <div class="modal-papel modal-cadastro">
+    
+    <div class="modal-header">
+      <h2 *ngIf="!modoExpress">Nova O.S. <small>(Passo {{ passoAtual }}/2)</small></h2>
+      <h2 *ngIf="modoExpress">⚡ O.S. Rápida (Balcão)</h2>
+      <button class="btn-fechar" (click)="fecharModalNovaOS()">✖</button>
     </div>
 
+    <div class="passo-container" *ngIf="passoAtual === 1 && !modoExpress">
+      
+      <div style="text-align: center; margin-bottom: 25px;">
+        <button class="btn-express" (click)="ativarModoExpress()">
+          ⚡ Cliente Novo? Criar O.S. Direto
+        </button>
+      </div>
+
+      <div class="search-hero">
+        <label>Ou busque um cliente já cadastrado:</label>
+        <div class="input-group-search">
+          <input 
+            type="text" 
+            [(ngModel)]="termoBuscaCliente" 
+            (input)="buscarComDelay()"
+            placeholder="Digite nome ou CPF..." 
+            class="input-big" autofocus
+          >
+          <button class="btn-search" (click)="buscarCliente()">
+            {{ buscando ? '⏳' : '🔍' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="lista-resultados" *ngIf="listaClientesEncontrados.length > 0">
+        <p class="text-muted" style="margin-bottom: 5px;">Selecione o cliente abaixo:</p>
+        <div 
+          class="card-cliente" 
+          *ngFor="let cliente of listaClientesEncontrados"
+          (click)="selecionarCliente(cliente)"
+        >
+          <strong>{{ cliente.nome }}</strong>
+          <span>{{ cliente.documento || 'Sem doc' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="passo-container" *ngIf="modoExpress">
+      <div class="alert-info">
+        📝 Preencha os dados. O sistema cria Cliente, Carro e O.S. de uma vez!
+      </div>
+
+      <div class="form-grid mt-3">
+        <div class="grupo-form full-width">
+          <label>Nome do Cliente *</label>
+          <input type="text" [(ngModel)]="dadosExpress.nomeCliente" class="input-padrao" placeholder="Ex: João da Silva">
+        </div>
+        <div class="grupo-form">
+          <label>Telefone</label>
+          <input type="text" [(ngModel)]="dadosExpress.telefone" class="input-padrao" placeholder="(45) 9...">
+        </div>
+        
+        <div class="grupo-form">
+          <label>Placa do Carro *</label>
+          <input type="text" [(ngModel)]="dadosExpress.placa" class="input-padrao" placeholder="ABC-1234">
+        </div>
+        <div class="grupo-form">
+          <label>Modelo</label>
+          <input type="text" [(ngModel)]="dadosExpress.modelo" class="input-padrao" placeholder="Gol, Palio...">
+        </div>
+        <div class="grupo-form">
+          <label>Cor</label>
+          <input type="text" [(ngModel)]="dadosExpress.cor" class="input-padrao">
+        </div>
+
+        <div class="grupo-form full-width">
+          <label>Defeito / Serviço *</label>
+          <textarea [(ngModel)]="dadosExpress.defeito" rows="3" class="input-padrao" placeholder="O que precisa fazer?"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancelar" (click)="cancelarExpress()">Voltar</button>
+        <button class="btn-salvar" (click)="salvarOSExpress()">✅ Criar Tudo</button>
+      </div>
+    </div>
+
+    <div class="passo-container" *ngIf="passoAtual === 2 && !modoExpress">
+      <div class="cliente-selecionado-box">
+        <span>Cliente: <strong>{{ clienteSelecionado?.nome }}</strong></span>
+        <button class="btn-link" (click)="voltarParaBusca()">Trocar</button>
+      </div>
+
+      <div class="form-grid mt-3">
+        <div class="grupo-form full-width" *ngIf="!exibirFormVeiculo">
+          <div class="flex-between">
+            <label>Qual veículo será consertado?</label>
+            <button class="btn-mini-action" (click)="toggleFormVeiculo()">+ Novo Carro</button>
+          </div>
+          
+          <select [(ngModel)]="dadosNovaOS.veiculoId" class="input-padrao" *ngIf="listaVeiculosDoCliente.length > 0">
+            <option [ngValue]="null" disabled>Selecione...</option>
+            <option *ngFor="let v of listaVeiculosDoCliente" [ngValue]="v.id">
+              {{ v.modelo }} - {{ v.placa }}
+            </option>
+          </select>
+
+          <div class="alert-warning" *ngIf="listaVeiculosDoCliente.length === 0">
+            ⚠️ Cliente sem veículos! <button class="btn-link-strong" (click)="toggleFormVeiculo()">Cadastrar</button>
+          </div>
+        </div>
+
+        <div class="box-cadastro-rapido full-width" *ngIf="exibirFormVeiculo">
+          <h4>🚙 Novo Veículo para {{ clienteSelecionado?.nome }}</h4>
+          <div class="grid-rapido">
+            <input type="text" [(ngModel)]="novoVeiculoRapido.modelo" placeholder="Modelo" class="input-padrao">
+            <input type="text" [(ngModel)]="novoVeiculoRapido.placa" placeholder="Placa" class="input-padrao">
+            <input type="text" [(ngModel)]="novoVeiculoRapido.cor" placeholder="Cor" class="input-padrao">
+          </div>
+          <div class="actions-rapido">
+            <button class="btn-cancelar small" (click)="toggleFormVeiculo()">Cancelar</button>
+            <button class="btn-salvar small" (click)="salvarVeiculoRapido()">Salvar</button>
+          </div>
+        </div>
+
+        <div class="grupo-form full-width" *ngIf="!exibirFormVeiculo">
+          <label>Defeito Relatado</label>
+          <textarea [(ngModel)]="dadosNovaOS.defeitoRelatado" rows="3" class="input-padrao"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions" *ngIf="!exibirFormVeiculo">
+        <button class="btn-cancelar" (click)="voltarParaBusca()">Voltar</button>
+        <button class="btn-salvar" (click)="salvarNovaOS()" [disabled]="!dadosNovaOS.veiculoId">🚀 Abrir O.S.</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="modalAberto && osSelecionada" style="z-index: 1000;">
+  <div class="modal-papel">
+    <div class="print-header-only"><h1>NITROGESTOR</h1><p>Relatório Técnico</p></div>
     <div class="modal-header">
       <h2>O.S. #{{ osSelecionada.id }}</h2>
       <button class="btn-fechar" (click)="fecharModal()">✖</button>
     </div>
-
     <div class="detalhes-grid">
-      <div class="grupo">
-        <label>Cliente</label>
-        <p>{{ osSelecionada.nomeCliente }}</p>
-      </div>
-      <div class="grupo">
-        <label>Total</label>
-        <p>R$ {{ osSelecionada.totalGeral | number : '1.2-2' }}</p>
-      </div>
+      <div class="grupo"><label>Cliente</label><p>{{ osSelecionada.nomeCliente }}</p></div>
+      <div class="grupo"><label>Veículo</label><p>{{ osSelecionada.modeloVeiculo }} ({{ osSelecionada.placaVeiculo }})</p></div>
     </div>
-
-    <div class="problema-box">
-      <label>Defeito:</label>
-      <p>{{ osSelecionada.defeitoRelatado }}</p>
-    </div>
-
+    <div class="problema-box"><label>Defeito:</label><p>{{ osSelecionada.defeitoRelatado }}</p></div>
     <hr />
-
     <div class="area-listas">
       <div class="lista-secao">
-        <div class="titulo-secao">
-          <h3>🔧 Serviços & Mão de Obra</h3>
-          <button class="btn-mini" (click)="abrirModalServico()">+ Add</button>
-        </div>
-
+        <div class="titulo-secao"><h3>🔧 Serviços</h3><button class="btn-mini" (click)="abrirModalServico()">+ Add</button></div>
         <table class="tabela-interna">
-          <thead>
-            <tr>
-              <th>Descrição</th>
-              <th>Mecânico</th>
-              <th class="text-right">Valor</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let servico of osSelecionada.servicos">
-              <td>{{ servico.descricao }}</td>
-              <td>
-                <span class="badge-mecanico">{{ servico.nomeMecanico }}</span>
-              </td>
-              <td class="text-right">R$ {{ servico.valor | number : '1.2-2' }}</td>
-            </tr>
-            <tr *ngIf="!osSelecionada.servicos.length">
-              <td colspan="3" class="text-center text-muted">Nenhum serviço lançado.</td>
-            </tr>
-          </tbody>
+          <tr *ngFor="let s of osSelecionada.servicos">
+            <td>{{ s.descricao }} <small>({{ s.nomeMecanico }})</small></td>
+            <td class="text-right">R$ {{ s.valor | number:'1.2-2' }}</td>
+          </tr>
         </table>
       </div>
-
       <div class="lista-secao mt-4">
-        <div class="titulo-secao">
-          <h3>📦 Peças Utilizadas</h3>
-          <div>
-            <button class="btn-mini" (click)="abrirModalPeca()">+ Add</button>
-          </div>
-        </div>
-
+        <div class="titulo-secao"><h3>📦 Peças</h3><button class="btn-mini" (click)="abrirModalPeca()">+ Add</button></div>
         <table class="tabela-interna">
-          <thead>
-            <tr>
-              <th>Produto/Peça</th>
-              <th class="text-center">Qtd</th>
-              <th class="text-right">Vl. Unit.</th>
-              <th class="text-right">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let peca of osSelecionada.pecas">
-              <td>{{ peca.nomePeca }}</td>
-              <td class="text-center">{{ peca.qtd }}</td>
-              <td class="text-right">R$ {{ peca.valorUn | number : '1.2-2' }}</td>
-              <td class="text-right fw-bold">R$ {{ peca.subtotal | number : '1.2-2' }}</td>
-            </tr>
-            <tr *ngIf="!osSelecionada.pecas.length">
-              <td colspan="4" class="text-center text-muted">Nenhuma peça utilizada.</td>
-            </tr>
-          </tbody>
+          <tr *ngFor="let p of osSelecionada.pecas">
+            <td>{{ p.nomePeca }}</td>
+            <td class="text-center">{{ p.qtd }}x</td>
+            <td class="text-right">R$ {{ p.subtotal | number:'1.2-2' }}</td>
+          </tr>
         </table>
       </div>
     </div>
     <hr />
-
     <div class="area-total">
-      <div class="resumo-valores">
-        <small>Serviços: R$ {{ osSelecionada.totalServicos | number : '1.2-2' }}</small>
-        <small>Peças: R$ {{ osSelecionada.totalPecas | number : '1.2-2' }}</small>
-      </div>
-      <div class="total-big">
-        <span>Total Geral:</span>
-        <h1>R$ {{ osSelecionada.totalGeral | number : '1.2-2' }}</h1>
-      </div>
+      <div class="total-big"><span>Total:</span><h1>R$ {{ osSelecionada.totalGeral | number:'1.2-2' }}</h1></div>
     </div>
-
     <div class="modal-actions">
       <button class="btn-imprimir" (click)="imprimirOS()">🖨️ Imprimir</button>
       <button class="btn-finalizar">✅ Finalizar</button>
@@ -186,96 +255,25 @@
   </div>
 </div>
 
-<div class="modal-overlay" *ngIf="modalNovaOSAberto">
-  <div class="modal-papel modal-cadastro">
-    <div class="modal-header">
-      <h2>Abrir Nova Ordem de Serviço</h2>
-      <button class="btn-fechar" (click)="fecharModalNovaOS()">✖</button>
-    </div>
-
-    <div class="form-grid">
-      <div class="grupo-form">
-        <label>Veículo / Cliente</label>
-        <select [(ngModel)]="dadosNovaOS.veiculoId" class="input-padrao">
-          <option [ngValue]="null" disabled>Selecione um veículo...</option>
-          <option *ngFor="let v of listaVeiculos" [ngValue]="v.id">
-            {{ v.modelo }} - {{ v.placa }} ({{ v.cliente?.nome || 'Sem Dono' }})
-          </option>
-        </select>
-      </div>
-
-      <div class="grupo-form full-width">
-        <label>Defeito Relatado</label>
-        <textarea
-          [(ngModel)]="dadosNovaOS.defeitoRelatado"
-          rows="4"
-          class="input-padrao"
-          placeholder="Descreva o problema do carro..."
-        >
-        </textarea>
-      </div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn-cancelar" (click)="fecharModalNovaOS()">Cancelar</button>
-      <button class="btn-salvar" (click)="salvarNovaOS()">🚀 Abrir O.S.</button>
-    </div>
-  </div>
-</div>
-
 <div class="modal-overlay" *ngIf="modalAddServicoAberto" style="z-index: 1100">
-  <div class="modal-papel pequena">
-    <h3>Adicionar Serviço</h3>
-    <div class="form-grid">
-      <div class="grupo-form">
-        <label>Descrição do Serviço</label>
-        <input
-          type="text"
-          [(ngModel)]="dadosServico.descricao"
-          class="input-padrao"
-          placeholder="Ex: Troca de Óleo"
-        />
+    <div class="modal-papel pequena">
+      <h3>Adicionar Serviço</h3>
+      <div class="form-grid">
+        <div class="grupo-form"><label>Descrição</label><input type="text" [(ngModel)]="dadosServico.descricao" class="input-padrao"></div>
+        <div class="grupo-form"><label>Mecânico</label><select [(ngModel)]="dadosServico.mecanicoId" class="input-padrao"><option *ngFor="let m of listaMecanicos" [ngValue]="m.id">{{ m.nome }}</option></select></div>
+        <div class="grupo-form"><label>Valor</label><input type="number" [(ngModel)]="dadosServico.valor" class="input-padrao"></div>
       </div>
-      <div class="grupo-form">
-        <label>Mecânico Responsável</label>
-        <select [(ngModel)]="dadosServico.mecanicoId" class="input-padrao">
-          <option [ngValue]="null">Selecione...</option>
-          <option *ngFor="let m of listaMecanicos" [ngValue]="m.id">{{ m.nome }}</option>
-        </select>
-      </div>
-      <div class="grupo-form">
-        <label>Valor (R$)</label>
-        <input type="number" [(ngModel)]="dadosServico.valor" class="input-padrao" />
-      </div>
+      <div class="modal-actions"><button class="btn-cancelar" (click)="fecharModalServico()">Cancelar</button><button class="btn-salvar" (click)="salvarServico()">Salvar</button></div>
     </div>
-    <div class="modal-actions">
-      <button class="btn-cancelar" (click)="fecharModalServico()">Cancelar</button>
-      <button class="btn-salvar" (click)="salvarServico()">Salvar</button>
-    </div>
-  </div>
 </div>
 
 <div class="modal-overlay" *ngIf="modalAddPecaAberto" style="z-index: 1100">
-  <div class="modal-papel pequena">
-    <h3>Adicionar Peça</h3>
-    <div class="form-grid">
-      <div class="grupo-form">
-        <label>Produto</label>
-        <select [(ngModel)]="dadosPeca.produtoId" class="input-padrao">
-          <option [ngValue]="null">Selecione a peça...</option>
-          <option *ngFor="let p of listaProdutos" [ngValue]="p.id">
-            {{ p.nome }} (Estoque: {{ p.quantidadeEstoque }}) - R$ {{ p.valorVenda }}
-          </option>
-        </select>
+    <div class="modal-papel pequena">
+      <h3>Adicionar Peça</h3>
+      <div class="form-grid">
+        <div class="grupo-form"><label>Peça</label><select [(ngModel)]="dadosPeca.produtoId" class="input-padrao"><option *ngFor="let p of listaProdutos" [ngValue]="p.id">{{ p.nome }} (Est: {{p.quantidadeEstoque}})</option></select></div>
+        <div class="grupo-form"><label>Qtd</label><input type="number" [(ngModel)]="dadosPeca.quantidade" class="input-padrao"></div>
       </div>
-      <div class="grupo-form">
-        <label>Quantidade</label>
-        <input type="number" [(ngModel)]="dadosPeca.quantidade" class="input-padrao" min="1" />
-      </div>
+      <div class="modal-actions"><button class="btn-cancelar" (click)="fecharModalPeca()">Cancelar</button><button class="btn-salvar" (click)="salvarPeca()">Salvar</button></div>
     </div>
-    <div class="modal-actions">
-      <button class="btn-cancelar" (click)="fecharModalPeca()">Cancelar</button>
-      <button class="btn-salvar" (click)="salvarPeca()">Salvar</button>
-    </div>
-  </div>
 </div>
