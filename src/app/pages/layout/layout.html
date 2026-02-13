@@ -1,0 +1,65 @@
+<div class="layout-wrapper">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="icon">🔧</span>
+      <h2>NitroGestor</h2>
+    </div>
+
+    <nav class="menu">
+      <p class="menu-label">PRINCIPAL</p>
+
+      <a routerLink="/home" routerLinkActive="active" class="menu-item">
+        <span class="icon">📊</span> Dashboard
+      </a>
+
+      <a routerLink="/ordens-servico" routerLinkActive="active" class="menu-item">
+        <span class="icon">📝</span> Ordens de Serviço
+      </a>
+
+      <p class="menu-label">GESTÃO</p>
+
+      <a routerLink="/clientes" routerLinkActive="active" class="menu-item">
+        <span class="icon">👥</span> Clientes
+      </a>
+
+      <a routerLink="/veiculos" routerLinkActive="active" class="menu-item">
+        <span class="icon">🚗</span> Veículos
+      </a>
+
+      <a routerLink="/produtos" routerLinkActive="active" class="menu-item">
+        <span class="icon">📦</span> Produtos / Estoque
+      </a>
+
+      <a href="#" class="menu-item">
+        <span class="icon">💰</span> Financeiro
+        <span
+          class="badge-em-breve"
+          style="
+            font-size: 0.7rem;
+            background: #eab308;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: auto;
+          "
+          >Breve</span
+        >
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button (click)="sair()" class="btn-sair">🚪 Sair</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="user-welcome">
+        <span>Olá, <strong>Admin</strong> 👋</span>
+      </div>
+      <div class="avatar-circle">A</div>
+    </header>
+
+    <div class="content-scrollable">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

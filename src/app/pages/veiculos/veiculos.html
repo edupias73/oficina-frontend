@@ -1,0 +1,88 @@
+<div class="container">
+  <header>
+    <h1>🚗 Frota da Oficina</h1>
+    <p>Visualizando todos os veículos cadastrados.</p>
+  </header>
+
+  <div class="card-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Veículo</th>
+          <th>Placa</th>
+          <th>Cor</th>
+          <th>Dono</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let v of listaVeiculos">
+          <td>
+            <strong>{{ v.marca }}</strong> {{ v.modelo }}
+          </td>
+          <td>
+            <span class="placa-badge">{{ v.placa }}</span>
+          </td>
+          <td>{{ v.cor }}</td>
+          <td>{{ v.cliente?.nome || 'Sem Dono' }}</td>
+          <td>
+            <button class="btn-os" (click)="abrirOS(v)">🛠️</button>
+
+            <button
+              class="btn-editar"
+              (click)="abrirModalEdicao(v)"
+              style="
+                margin-left: 5px;
+                background: orange;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+              "
+            >
+              ✏️
+            </button>
+
+            <button
+              class="btn-excluir"
+              (click)="excluirVeiculo(v.id)"
+              style="margin-left: 5px; cursor: pointer"
+            >
+              🗑️
+            </button>
+          </td>
+        </tr>
+        <div class="modal-overlay" *ngIf="modalAberto">
+          <div class="modal-box">
+            <h2>Editar Veículo</h2>
+
+            <label>Marca</label>
+            <input type="text" [(ngModel)]="veiculoEmEdicao.marca" />
+
+            <label>Modelo</label>
+            <input type="text" [(ngModel)]="veiculoEmEdicao.modelo" />
+
+            <label>Placa</label>
+            <input type="text" [(ngModel)]="veiculoEmEdicao.placa" />
+
+            <label>Cor</label>
+            <input type="text" [(ngModel)]="veiculoEmEdicao.cor" />
+
+            <div
+              class="modal-actions"
+              style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end"
+            >
+              <button (click)="fecharModal()">Cancelar</button>
+              <button (click)="salvarEdicao()" style="background: green; color: white">
+                Salvar
+              </button>
+            </div>
+          </div>
+        </div>
+      </tbody>
+    </table>
+
+    <div *ngIf="listaVeiculos.length === 0" class="empty-state">
+      Nenhum veículo na oficina ainda. Vá em Clientes para cadastrar.
+    </div>
+  </div>
+</div>

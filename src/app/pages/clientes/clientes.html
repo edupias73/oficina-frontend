@@ -1,0 +1,56 @@
+<div class="container">
+  <header>
+    <h1>👥 Gerenciar Clientes</h1>
+    <button class="btn-novo">Novo Cliente</button>
+  </header>
+
+  <div class="card-table">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Telefone</th>
+          <th>Email</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of listaClientes">
+          <td>#{{ c.id }}</td>
+          <td>{{ c.nome }}</td>
+          <td>{{ c.telefone }}</td>
+          <td>{{ c.email }}</td>
+          <td>
+            <button class="btn-acao btn-editar" (click)="abrirModal(c)">✏️</button>
+
+            <button class="btn-acao btn-excluir" (click)="excluirCliente(c.id)">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="modalAberto">
+  <div class="modal-box">
+    <h2>Editar Cliente</h2>
+
+    <label>Nome</label>
+    <input type="text" [(ngModel)]="clienteEmEdicao.nome" />
+
+    <label>Telefone</label>
+    <input type="text" [(ngModel)]="clienteEmEdicao.telefone" />
+
+    <label>Email</label>
+    <input type="text" [(ngModel)]="clienteEmEdicao.email" />
+
+    <label>Documento (CPF/CNPJ)</label>
+    <input type="text" [(ngModel)]="clienteEmEdicao.documento" />
+
+    <div class="modal-actions">
+      <button class="btn-cancelar" (click)="fecharModal()">Cancelar</button>
+      <button class="btn-salvar" (click)="salvarEdicao()">Salvar</button>
+    </div>
+  </div>
+</div>

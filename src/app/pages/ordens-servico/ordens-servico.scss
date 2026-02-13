@@ -1,0 +1,657 @@
+// =========================================
+// 1. VARIÁVEIS E GLOBAIS
+// =========================================
+$primary: #2563eb; // Azul Royal
+$success: #16a34a; // Verde
+$danger: #dc2626; // Vermelho
+$text-dark: #1f2937; // Cinza Escuro
+$text-light: #6b7280; // Cinza Claro
+$bg-light: #f3f4f6; // Fundo página
+$border: #e5e7eb; // Bordas suaves
+
+* {
+  box-sizing: border-box;
+}
+
+.page-container {
+  padding: 1.5rem;
+  background-color: $bg-light;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// =========================================
+// 2. TOOLBAR
+// =========================================
+.page-toolbar {
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid $border;
+
+  .toolbar-left {
+    h1 {
+      margin: 0;
+      color: $text-dark;
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    p {
+      margin: 2px 0 0;
+      color: $text-light;
+      font-size: 0.9rem;
+    }
+  }
+
+  .toolbar-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    .search-box {
+      position: relative;
+      input {
+        padding: 10px 10px 10px 38px;
+        border: 1px solid $border;
+        border-radius: 8px;
+        width: 280px;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        &:focus {
+          outline: none;
+          border-color: $primary;
+          box-shadow: 0 0 0 3px rgba($primary, 0.1);
+        }
+      }
+      .icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $text-light;
+      }
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, $primary 0%, darken($primary, 10%) 100%);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 6px -1px rgba($primary, 0.4);
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px -1px rgba($primary, 0.5);
+      }
+      &:active {
+        transform: translateY(0);
+      }
+      .icon {
+        font-size: 1.2rem;
+        font-weight: 400;
+      }
+    }
+  }
+}
+
+// =========================================
+// 3. TABELA
+// =========================================
+.card-table {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  border: 1px solid $border;
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    thead {
+      background-color: #f9fafb;
+      th {
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 700;
+        color: $text-light;
+        border-bottom: 2px solid $border;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+      }
+      .text-right {
+        text-align: right;
+      }
+    }
+    tbody tr {
+      border-bottom: 1px solid $border;
+      &:hover {
+        background-color: #f3f4f6;
+      }
+      td {
+        padding: 12px 16px;
+        color: $text-dark;
+        vertical-align: middle;
+        font-size: 0.95rem;
+      }
+    }
+  }
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  &.aberta {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #dbeafe;
+  }
+  &.finalizada {
+    background-color: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #dcfce7;
+  }
+}
+.placa {
+  background: #e5e7eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.85rem;
+  margin-left: 5px;
+  font-weight: 700;
+  color: #374151;
+}
+.id-col {
+  color: $text-light;
+  font-weight: bold;
+  font-family: monospace;
+}
+.valor {
+  font-family: monospace;
+  font-weight: 700;
+  color: $text-dark;
+}
+.actions-cell {
+  text-align: right;
+  .btn-icon {
+    background: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    margin-left: 5px;
+    &.view {
+      color: $primary;
+      &:hover {
+        background: #eff6ff;
+      }
+    }
+    &.delete {
+      color: $danger;
+      &:hover {
+        background: #fee2e2;
+      }
+    }
+  }
+}
+
+// =========================================
+// 4. MODAL (COM ESPAÇAMENTO RESPIRÁVEL)
+// =========================================
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+
+  // 👇 AQUI ESTÁ O SEGREDO DO ESPAÇO:
+  display: block; // Bloco de rolagem padrão
+  overflow-y: auto; // Habilita rolagem na tela toda
+  padding: 40px 10px; // 40px de "ar" em cima e embaixo, 10px nas laterais
+
+  .modal-papel {
+    background: white;
+    border-radius: 8px;
+
+    // Tamanho e centralização horizontal
+    width: 95%;
+    max-width: 1200px;
+    margin: 0 auto; // Vertical é 0 porque o padding do pai já empurra
+
+    // Se o conteúdo for pequeno, centraliza verticalmente (Flexbox Hack no Margin)
+    // Descomente a linha abaixo se quiser que modais pequenos fiquem no meio da tela:
+    // margin: auto;
+
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    animation: zoomIn 0.2s ease-out;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+
+    // Ajustes para modais específicos
+    &.modal-cadastro {
+      width: 500px !important;
+      max-width: 90%;
+      margin: 5vh auto;
+    } // Esse mantém margem própria
+    &.pequena {
+      width: 400px !important;
+      max-width: 90%;
+      margin: 10vh auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid $border;
+      padding-bottom: 0.5rem;
+      h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        color: $text-dark;
+        font-weight: 800;
+      }
+      .btn-fechar {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: $text-light;
+        &:hover {
+          color: $danger;
+        }
+      }
+    }
+
+    .detalhes-grid {
+      display: grid;
+      grid-template-columns: 2fr 2fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      .grupo {
+        background: #f9fafb;
+        padding: 0.8rem;
+        border-radius: 6px;
+        border: 1px solid $border;
+        label {
+          display: block;
+          font-size: 0.75rem;
+          color: $text-light;
+          text-transform: uppercase;
+          margin-bottom: 2px;
+          font-weight: 700;
+        }
+        p {
+          margin: 0;
+          font-weight: 600;
+          font-size: 1rem;
+          color: $text-dark;
+        }
+      }
+    }
+
+    .problema-box {
+      background-color: #fff1f2;
+      padding: 0.8rem;
+      border-radius: 6px;
+      border-left: 4px solid $danger;
+      margin-bottom: 1.5rem;
+      label {
+        font-weight: 800;
+        color: $danger;
+        display: block;
+        margin-bottom: 2px;
+        font-size: 0.8rem;
+      }
+      p {
+        margin: 0;
+        color: #9f1239;
+        font-style: italic;
+        font-size: 0.95rem;
+      }
+    }
+
+    .area-listas {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 1rem;
+    }
+
+    .lista-secao {
+      .titulo-secao {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        border-bottom: 2px solid $bg-light;
+        padding-bottom: 0.2rem;
+        h3 {
+          font-size: 1rem;
+          font-weight: 700;
+          color: $text-dark;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .btn-mini {
+          background-color: $primary;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          padding: 4px 10px;
+          font-size: 0.75rem;
+          cursor: pointer;
+          font-weight: bold;
+          text-transform: uppercase;
+          &:hover {
+            background-color: darken($primary, 10%);
+          }
+        }
+        .badge-total {
+          background: $bg-light;
+          padding: 2px 8px;
+          border-radius: 4px;
+          font-weight: 700;
+          font-size: 0.9rem;
+        }
+      }
+      .tabela-interna {
+        width: 100%;
+        border: 1px solid $border;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        th {
+          background: #f9fafb;
+          padding: 8px;
+          text-align: left;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          color: $text-light;
+          font-weight: 700;
+        }
+        td {
+          padding: 8px;
+          border-top: 1px solid $border;
+        }
+        .text-right {
+          text-align: right;
+        }
+        .text-center {
+          text-align: center;
+        }
+        .badge-mecanico {
+          background: #eff6ff;
+          color: $primary;
+          border: 1px solid #bfdbfe;
+          padding: 1px 6px;
+          border-radius: 4px;
+          font-size: 0.7rem;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .area-total {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid $border;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 2rem;
+      .resumo-valores {
+        text-align: right;
+        small {
+          display: block;
+          color: $text-light;
+          margin-bottom: 2px;
+          font-size: 0.85rem;
+        }
+      }
+      .total-big {
+        span {
+          font-size: 0.85rem;
+          color: $text-dark;
+          display: block;
+          text-align: right;
+          text-transform: uppercase;
+          font-weight: 700;
+        }
+        h1 {
+          margin: 0;
+          font-size: 2rem;
+          color: $success;
+          letter-spacing: -1px;
+        }
+      }
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid $border;
+      button {
+        padding: 10px 20px;
+        border-radius: 6px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        &:active {
+          transform: scale(0.98);
+        }
+      }
+      .btn-cancelar {
+        background: white;
+        border: 1px solid $border;
+        color: $text-dark;
+        &:hover {
+          background: $bg-light;
+        }
+      }
+      .btn-salvar,
+      .btn-finalizar {
+        background: $success;
+        color: white;
+        &:hover {
+          background: darken($success, 10%);
+        }
+      }
+      .btn-imprimir {
+        background: $text-dark;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        &:hover {
+          background: black;
+        }
+      }
+    }
+  }
+
+  .form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 10px;
+    .grupo-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .input-padrao {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 1rem;
+        color: #1f2937;
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        transition: all 0.2s ease-in-out;
+        font-family: inherit;
+        &:focus {
+          background-color: white;
+          border-color: $primary;
+          outline: none;
+          box-shadow: 0 0 0 4px rgba($primary, 0.15);
+          transform: translateY(-1px);
+        }
+      }
+      textarea.input-padrao {
+        min-height: 120px;
+        resize: vertical;
+        line-height: 1.5;
+      }
+    }
+  }
+}
+// =========================================
+// 5. IMPRESSÃO (CORREÇÃO FINAL: FUNDO BRANCO)
+// =========================================
+.print-header-only {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  // 1. Remove tudo da tela
+  .page-container,
+  .page-toolbar,
+  .card-table {
+    display: none !important;
+  }
+
+  // 2. Overlay: Fundo BRANCO (para cobrir qualquer cinza)
+  .modal-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    z-index: 9999 !important;
+
+    background-color: #ffffff !important; // Pinta de branco
+    background: #ffffff !important;
+
+    backdrop-filter: none !important;
+    display: block !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  // 3. Papel: Simples e Branco
+  .modal-papel {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+
+    .btn-fechar,
+    .modal-actions,
+    .btn-mini,
+    .modal-header .btn-fechar {
+      display: none !important;
+    }
+
+    .print-header-only {
+      display: block;
+      text-align: center;
+      border-bottom: 2px solid #000;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      h1 {
+        font-size: 24px;
+        font-weight: 900;
+        margin: 0;
+        text-transform: uppercase;
+        color: #000;
+      }
+      p {
+        font-size: 12px;
+        margin: 5px 0 0;
+        color: #000;
+      }
+    }
+
+    .problema-box {
+      border: 1px solid #000 !important;
+      background: none !important;
+      color: #000 !important;
+      label,
+      p {
+        color: #000 !important;
+      }
+    }
+    .status-badge,
+    .badge-mecanico {
+      border: 1px solid #000 !important;
+      color: #000 !important;
+      background: none !important;
+    }
+    .tabela-interna {
+      border: 1px solid #000 !important;
+    }
+    th {
+      background: #eee !important;
+      color: #000 !important;
+      border-bottom: 1px solid #000 !important;
+    }
+    td {
+      border-bottom: 1px solid #000 !important;
+      color: #000 !important;
+    }
+
+    table {
+      page-break-inside: auto;
+    }
+    tr {
+      page-break-inside: avoid;
+    }
+  }
+}
