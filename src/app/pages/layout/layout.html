@@ -1,65 +1,106 @@
 <div class="layout-wrapper">
+  
   <aside class="sidebar">
-    <div class="brand">
-      <span class="icon">🔧</span>
-      <h2>NitroGestor</h2>
+    
+    <div class="logo-area">
+      <div class="logo-icon">N</div>
+      <div class="logo-text">
+        <span>NITRO</span>
+        <small>Gestor</small>
+      </div>
     </div>
 
-    <nav class="menu">
-      <p class="menu-label">PRINCIPAL</p>
+    <nav class="main-menu">
+      <ul>
+        <li [class.active]="moduloAtivo === 'principal'" (click)="selecionarModulo('principal')">
+          <div class="icon-container">🏠</div>
+          <div class="label">Principal</div>
+        </li>
 
-      <a routerLink="/home" routerLinkActive="active" class="menu-item">
-        <span class="icon">📊</span> Dashboard
-      </a>
+        <li [class.active]="moduloAtivo === 'cadastros'" (click)="selecionarModulo('cadastros')">
+          <div class="icon-container">📁</div>
+          <div class="label">Cadastros</div>
+        </li>
 
-      <a routerLink="/ordens-servico" routerLinkActive="active" class="menu-item">
-        <span class="icon">📝</span> Ordens de Serviço
-      </a>
+        <li [class.active]="moduloAtivo === 'estoque'" (click)="selecionarModulo('estoque')">
+          <div class="icon-container">📦</div>
+          <div class="label">Estoque</div>
+        </li>
 
-      <p class="menu-label">GESTÃO</p>
+        <li [class.active]="moduloAtivo === 'financeiro'" (click)="selecionarModulo('financeiro')">
+          <div class="icon-container">💰</div>
+          <div class="label">Financeiro</div>
+        </li>
 
-      <a routerLink="/clientes" routerLinkActive="active" class="menu-item">
-        <span class="icon">👥</span> Clientes
-      </a>
+        <li [class.active]="moduloAtivo === 'relatorios'" (click)="selecionarModulo('relatorios')">
+          <div class="icon-container">📊</div>
+          <div class="label">Relatórios</div>
+        </li>
 
-      <a routerLink="/veiculos" routerLinkActive="active" class="menu-item">
-        <span class="icon">🚗</span> Veículos
-      </a>
-
-      <a routerLink="/produtos" routerLinkActive="active" class="menu-item">
-        <span class="icon">📦</span> Produtos / Estoque
-      </a>
-
-      <a href="#" class="menu-item">
-        <span class="icon">💰</span> Financeiro
-        <span
-          class="badge-em-breve"
-          style="
-            font-size: 0.7rem;
-            background: #eab308;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: auto;
-          "
-          >Breve</span
-        >
-      </a>
+        <li [class.active]="moduloAtivo === 'config'" (click)="selecionarModulo('config')">
+          <div class="icon-container">⚙️</div>
+          <div class="label">Config</div>
+        </li>
+      </ul>
     </nav>
-    <div class="sidebar-footer">
-      <button (click)="sair()" class="btn-sair">🚪 Sair</button>
+
+    <div class="sidebar-footer" (click)="sair()">
+      <div class="icon-container">🚪</div>
+      <div class="label">Sair do Sistema</div>
     </div>
   </aside>
 
-  <main class="main-content">
-    <header class="topbar">
-      <div class="user-welcome">
-        <span>Olá, <strong>Admin</strong> 👋</span>
+
+  <main class="content-wrapper">
+    
+    <header class="top-submenu">
+      
+      <nav class="nav-links" *ngIf="moduloAtivo === 'principal'">
+        <a routerLink="/home" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/os" routerLinkActive="active">Ordens de Serviço</a>
+      </nav>
+
+      <nav class="nav-links" *ngIf="moduloAtivo === 'cadastros'">
+        <a routerLink="/clientes" routerLinkActive="active">Clientes</a>
+        <a routerLink="/veiculos" routerLinkActive="active">Veículos</a>
+        <a routerLink="/produtos" routerLinkActive="active">Produtos</a>
+        <a routerLink="/mecanicos" routerLinkActive="active">Mecânicos</a>
+        <a routerLink="/usuarios" routerLinkActive="active">Usuários</a>
+      </nav>
+
+      <nav class="nav-links" *ngIf="moduloAtivo === 'estoque'">
+        <a routerLink="/produtos" routerLinkActive="active">Controle Estoque</a>
+        <span class="disabled">Entrada NF</span>
+        <span class="disabled">Baixa Manual</span>
+      </nav>
+
+      <nav class="nav-links" *ngIf="moduloAtivo === 'financeiro'">
+        <span class="disabled">Contas a Pagar</span>
+        <span class="disabled">Contas a Receber</span>
+        <span class="disabled">Fluxo de Caixa</span>
+      </nav>
+
+      <nav class="nav-links" *ngIf="moduloAtivo === 'relatorios'">
+        <span class="disabled">Vendas</span>
+        <span class="disabled">Comissões</span>
+        <span class="disabled">Financeiro</span>
+      </nav>
+
+      <nav class="nav-links" *ngIf="moduloAtivo === 'config'">
+        <span class="disabled">Dados da Oficina</span>
+        <span class="disabled">Permissões</span>
+        <span class="disabled">Backup</span>
+      </nav>
+
+      <div class="user-info">
+        <span class="greeting">Olá, <strong>Eduardo</strong></span>
+        <div class="status-dot"></div>
       </div>
-      <div class="avatar-circle">A</div>
     </header>
 
-    <div class="content-scrollable">
+    <div class="page-content">
       <router-outlet></router-outlet>
     </div>
+
   </main>
 </div>

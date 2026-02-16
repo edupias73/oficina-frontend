@@ -260,4 +260,66 @@ export class OrdensServicoComponent implements OnInit {
     const t = this.termoBusca.toLowerCase();
     this.listaOS = this.listaTodasOS.filter(o => o.nomeCliente.toLowerCase().includes(t) || o.placaVeiculo.toLowerCase().includes(t));
   }
+
+deletarServico(idServico: number) {
+    if (!this.osSelecionada) return;
+    if (!confirm('Remover este serviço da O.S.?')) return;
+
+    this.http.delete(`http://127.0.0.1:8080/os/${this.osSelecionada.id}/servicos/${idServico}`)
+      .subscribe({
+        next: (osAtualizada: any) => {
+          this.osSelecionada = osAtualizada; // Atualiza a tela com o novo total
+          this.carregarOS(); // Atualiza a lista geral no fundo
+        },
+        error: (erro) => {
+          console.error(erro);
+          alert('Erro ao remover serviço.');
+        }
+      });
+  }
+
+  deletarPeca(idPeca: number) {
+    if (!this.osSelecionada) return;
+    if (!confirm('Remover esta peça e devolver ao estoque?')) return;
+
+    this.http.delete(`http://127.0.0.1:8080/os/${this.osSelecionada.id}/itens/${idPeca}`)
+      .subscribe({
+        next: (osAtualizada: any) => {
+          this.osSelecionada = osAtualizada; // Atualiza a tela com o novo total
+          this.carregarOS(); // Atualiza a lista geral no fundo
+        },
+        error: (erro) => {
+          console.error(erro);
+          alert('Erro ao remover peça.');
+        }
+      });
+  }
+  finalizarOS() {
+    if (!this.osSelecionada) return;
+
+    // 1. Pergunta a forma de pagamento
+    const pagamento = prompt('Qual a forma de pagamento?\n(Ex: Pix, Dinheiro, Cartão Crédito)');
+
+    // Se o usuário clicar em Cancelar ou não digitar nada, a gente para.
+    if (!pagamento) return;
+
+    if (!confirm(`Confirma o recebimento de R$ ${this.osSelecionada.totalGeral} no ${pagamento}?`)) {
+      return;
+    }
+
+    // 2. Envia pro Backend
+    this.http.put(`http://127.0.0.1:8080/os/${this.osSelecionada.id}/finalizar`, pagamento).subscribe({
+      next: (osAtualizada: any) => {
+        alert('✅ O.S. Finalizada com sucesso!');
+        this.osSelecionada = osAtualizada; // Atualiza a tela
+        this.carregarOS(); // Atualiza a lista
+        this.fecharModal();
+      },
+      error: (erro) => {
+        console.error(erro);
+        alert('Erro ao finalizar. Veja o console.');
+      }
+    });
+  }
+
 }

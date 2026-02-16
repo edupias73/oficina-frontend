@@ -6,30 +6,29 @@ import { ClientesComponent } from './pages/clientes/clientes';
 import { authGuard } from './core/guards/auth-guard';
 import { VeiculosComponent } from './pages/veiculos/veiculos';
 import { OrdensServicoComponent } from './pages/ordens-servico/ordens-servico';
-import { ProdutoService } from './services/produto.service';
 import { ProdutosComponent } from './pages/produtos/produtos';
+import { Mecanicos } from './pages/mecanicos/mecanicos';
+import { Usuarios } from './pages/usuarios/usuarios';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
 
-  // ROTA PAI (O Layout)
   {
     path: '',
     component: LayoutComponent,
     canActivate: [authGuard],
     children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      
       { path: 'home', component: Home },
       { path: 'clientes', component: ClientesComponent },
       { path: 'veiculos', component: VeiculosComponent },
-      { path: 'ordens-servico', component: OrdensServicoComponent },
-
-      // 👇 2. CORRIGI O NOME DO COMPONENTE AQUI (De 'Produtos' para 'ProdutosComponent')
+      { path: 'os', component: OrdensServicoComponent },
       { path: 'produtos', component: ProdutosComponent },
-
-      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'mecanicos', component: Mecanicos },
+      { path: 'usuarios', component: Usuarios },
     ],
   },
 
-  // Rota coringa
   { path: '**', redirectTo: 'login' },
 ];

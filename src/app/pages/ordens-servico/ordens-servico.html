@@ -61,8 +61,8 @@
             <td>{{ os.dataAbertura | date : 'dd/MM/yyyy' }}</td>
             <td class="valor">R$ {{ os.totalGeral | number : '1.2-2' }}</td>
             <td class="actions-cell">
-              <button class="btn-icon view" (click)="abrirModalDetalhes(os)" title="Ver">👁️</button>
-              <button class="btn-icon delete" (click)="deletarOS(os.id)" title="Excluir">🗑️</button>
+              <button class="btn-icon view" (click)="abrirModalDetalhes(os)" title="Ver Detalhes">👁️</button>
+              <button class="btn-icon delete" (click)="deletarOS(os.id)" title="Excluir O.S.">🗑️</button>
             </td>
           </tr>
         </tbody>
@@ -213,44 +213,73 @@
 <div class="modal-overlay" *ngIf="modalAberto && osSelecionada" style="z-index: 1000;">
   <div class="modal-papel">
     <div class="print-header-only"><h1>NITROGESTOR</h1><p>Relatório Técnico</p></div>
+    
     <div class="modal-header">
-      <h2>O.S. #{{ osSelecionada.id }}</h2>
+      <h2>O.S. #{{ osSelecionada.id }} <span *ngIf="osSelecionada.status === 'FINALIZADA'" style="color:red; font-size:0.8em">(FINALIZADA)</span></h2>
       <button class="btn-fechar" (click)="fecharModal()">✖</button>
     </div>
+    
     <div class="detalhes-grid">
       <div class="grupo"><label>Cliente</label><p>{{ osSelecionada.nomeCliente }}</p></div>
       <div class="grupo"><label>Veículo</label><p>{{ osSelecionada.modeloVeiculo }} ({{ osSelecionada.placaVeiculo }})</p></div>
     </div>
+    
     <div class="problema-box"><label>Defeito:</label><p>{{ osSelecionada.defeitoRelatado }}</p></div>
+    
     <hr />
+    
     <div class="area-listas">
       <div class="lista-secao">
-        <div class="titulo-secao"><h3>🔧 Serviços</h3><button class="btn-mini" (click)="abrirModalServico()">+ Add</button></div>
+        <div class="titulo-secao">
+            <h3>🔧 Serviços</h3>
+            <button class="btn-mini" (click)="abrirModalServico()" *ngIf="osSelecionada.status !== 'FINALIZADA'">+ Add</button>
+        </div>
         <table class="tabela-interna">
           <tr *ngFor="let s of osSelecionada.servicos">
-            <td>{{ s.descricao }} <small>({{ s.nomeMecanico }})</small></td>
+            <td>
+              {{ s.descricao }} 
+              <small style="display:block; color:#666">Mecânico: {{ s.nomeMecanico }}</small>
+            </td>
             <td class="text-right">R$ {{ s.valor | number:'1.2-2' }}</td>
+            <td style="width: 40px; text-align: center;">
+              <button class="btn-icon delete" (click)="deletarServico(s.id)" title="Remover" 
+                      *ngIf="osSelecionada.status !== 'FINALIZADA'"
+                      style="border:none; background:none; cursor:pointer; font-size:1.1rem;">🗑️</button>
+            </td>
           </tr>
         </table>
       </div>
+
       <div class="lista-secao mt-4">
-        <div class="titulo-secao"><h3>📦 Peças</h3><button class="btn-mini" (click)="abrirModalPeca()">+ Add</button></div>
+        <div class="titulo-secao">
+            <h3>📦 Peças</h3>
+            <button class="btn-mini" (click)="abrirModalPeca()" *ngIf="osSelecionada.status !== 'FINALIZADA'">+ Add</button>
+        </div>
         <table class="tabela-interna">
           <tr *ngFor="let p of osSelecionada.pecas">
             <td>{{ p.nomePeca }}</td>
             <td class="text-center">{{ p.qtd }}x</td>
             <td class="text-right">R$ {{ p.subtotal | number:'1.2-2' }}</td>
+            <td style="width: 40px; text-align: center;">
+              <button class="btn-icon delete" (click)="deletarPeca(p.id)" title="Remover" 
+                      *ngIf="osSelecionada.status !== 'FINALIZADA'"
+                      style="border:none; background:none; cursor:pointer; font-size:1.1rem;">🗑️</button>
+            </td>
           </tr>
         </table>
       </div>
     </div>
+    
     <hr />
+    
     <div class="area-total">
       <div class="total-big"><span>Total:</span><h1>R$ {{ osSelecionada.totalGeral | number:'1.2-2' }}</h1></div>
     </div>
+    
     <div class="modal-actions">
       <button class="btn-imprimir" (click)="imprimirOS()">🖨️ Imprimir</button>
-      <button class="btn-finalizar">✅ Finalizar</button>
+      
+      <button class="btn-finalizar" (click)="finalizarOS()" *ngIf="osSelecionada.status !== 'FINALIZADA'">✅ Finalizar</button>
     </div>
   </div>
 </div>
@@ -260,7 +289,12 @@
       <h3>Adicionar Serviço</h3>
       <div class="form-grid">
         <div class="grupo-form"><label>Descrição</label><input type="text" [(ngModel)]="dadosServico.descricao" class="input-padrao"></div>
-        <div class="grupo-form"><label>Mecânico</label><select [(ngModel)]="dadosServico.mecanicoId" class="input-padrao"><option *ngFor="let m of listaMecanicos" [ngValue]="m.id">{{ m.nome }}</option></select></div>
+        <div class="grupo-form">
+          <label>Mecânico</label>
+          <select [(ngModel)]="dadosServico.mecanicoId" class="input-padrao">
+            <option *ngFor="let m of listaMecanicos" [ngValue]="m.id">{{ m.nome }}</option>
+          </select>
+        </div>
         <div class="grupo-form"><label>Valor</label><input type="number" [(ngModel)]="dadosServico.valor" class="input-padrao"></div>
       </div>
       <div class="modal-actions"><button class="btn-cancelar" (click)="fecharModalServico()">Cancelar</button><button class="btn-salvar" (click)="salvarServico()">Salvar</button></div>
@@ -271,7 +305,14 @@
     <div class="modal-papel pequena">
       <h3>Adicionar Peça</h3>
       <div class="form-grid">
-        <div class="grupo-form"><label>Peça</label><select [(ngModel)]="dadosPeca.produtoId" class="input-padrao"><option *ngFor="let p of listaProdutos" [ngValue]="p.id">{{ p.nome }} (Est: {{p.quantidadeEstoque}})</option></select></div>
+        <div class="grupo-form">
+          <label>Peça</label>
+          <select [(ngModel)]="dadosPeca.produtoId" class="input-padrao">
+            <option *ngFor="let p of listaProdutos" [ngValue]="p.id">
+              {{ p.nome }} (Estoque: {{p.quantidadeEstoque}})
+            </option>
+          </select>
+        </div>
         <div class="grupo-form"><label>Qtd</label><input type="number" [(ngModel)]="dadosPeca.quantidade" class="input-padrao"></div>
       </div>
       <div class="modal-actions"><button class="btn-cancelar" (click)="fecharModalPeca()">Cancelar</button><button class="btn-salvar" (click)="salvarPeca()">Salvar</button></div>

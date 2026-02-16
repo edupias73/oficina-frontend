@@ -1,160 +1,196 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* =========================================
+   CORES E VARIÁVEIS (Visual Premium)
+   ========================================= */
+$sidebar-bg: #0f172a;       /* Azul Escuro (Slate 900) */
+$sidebar-hover: #1e293b;    /* Slate 800 */
+$text-white: #f8fafc;
+$text-gray: #94a3b8;
+$purple: #6366f1;           /* Roxo Destaque */
+$bg-app: #f1f5f9;
 
-* {
-  box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
-}
+* { box-sizing: border-box; }
 
-/* Wrapper Geral: Segura o Menu e o Conteúdo lado a lado */
 .layout-wrapper {
   display: flex;
   height: 100vh;
   width: 100vw;
-  overflow: hidden; /* A janela não rola, só o conteúdo de dentro */
-  background-color: #f8fafc; /* Fundo cinza bem clarinho pro conteúdo */
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: $bg-app;
 }
 
-/* --- SIDEBAR (Esquerda) --- */
+/* =========================================
+   SIDEBAR (A Barra Lateral)
+   ========================================= */
 .sidebar {
-  width: 260px;
-  background: #0f172a; /* Azul Escuro Profissional */
-  color: white;
+  /* Tamanhos FIXOS e ROBUSTOS */
+  width: 80px;
+  min-width: 80px;  /* Garante que nunca diminua */
+  
+  background-color: $sidebar-bg;
+  color: $text-white;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+  z-index: 999;
+  
+  /* A única animação necessária: LARGURA */
+  transition: width 0.3s ease;
+  overflow: hidden;    /* Esconde o que não cabe */
+  white-space: nowrap; /* Impede texto de quebrar linha */
+  box-shadow: 4px 0 15px rgba(0,0,0,0.1);
 }
 
-.brand {
+/* --- AO PASSAR O MOUSE (ABRIR) --- */
+.sidebar:hover {
+  width: 260px;
+}
+
+/* =========================================
+   LOGO
+   ========================================= */
+.logo-area {
   height: 70px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
-  .icon {
-    font-size: 1.4rem;
-  }
-  h2 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    margin: 0;
-    color: #fff;
-  }
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.2);
 }
 
-.menu {
+.logo-icon {
+  width: 80px;      /* Largura fixa igual sidebar fechada */
+  min-width: 80px;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: $purple;
+}
+
+.logo-text {
+  /* Texto simples: invisível quando fechado */
+  opacity: 0;
+  font-weight: bold;
+  font-size: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.2s; /* Aparece suavemente */
+}
+
+.logo-text small { font-size: 0.75rem; color: $text-gray; font-weight: 400; }
+
+/* Mostra o logo ao abrir */
+.sidebar:hover .logo-text {
+  opacity: 1;
+}
+
+/* =========================================
+   MENU PRINCIPAL
+   ========================================= */
+.main-menu {
   flex: 1;
-  padding: 20px 12px;
-  overflow-y: auto;
+  padding-top: 20px;
 }
 
-.menu-label {
-  font-size: 0.7rem;
-  color: #64748b;
-  font-weight: 700;
-  margin: 20px 0 10px 12px;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-}
+.main-menu ul { list-style: none; padding: 0; margin: 0; }
 
-.menu-item {
+.main-menu li {
+  height: 55px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  color: #94a3b8; /* Cinza azulado */
-  text-decoration: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: $text-gray;
+}
+
+.main-menu li:hover {
+  background-color: $sidebar-hover;
+  color: white;
+}
+
+.main-menu li.active {
+  background-color: rgba(99, 102, 241, 0.15); /* Roxo transparente */
+  color: white;
+  border-right: 3px solid $purple;
+}
+
+/* ÍCONES */
+.icon-container {
+  width: 80px;      /* Largura fixa igual sidebar fechada */
+  min-width: 80px;
+  text-align: center;
+  font-size: 1.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-menu li.active .icon-container { color: $purple; }
+
+/* TEXTOS DO MENU */
+.label {
+  font-size: 0.95rem;
   font-weight: 500;
-  margin-bottom: 4px;
-  transition: all 0.2s;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: white;
-  }
-
-  &.active {
-    background: #3b82f6; /* Azul Royal */
-    color: white;
-    font-weight: 600;
-  }
+  opacity: 0; /* Invisível por padrão */
+  transition: opacity 0.2s; /* Aparece suave */
 }
 
-.badge-em-breve {
-  font-size: 0.6rem;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: auto;
+/* MÁGICA: Mostra o texto quando o mouse está na sidebar */
+.sidebar:hover .label {
+  opacity: 1;
 }
 
+/* =========================================
+   RODAPÉ (Sair)
+   ========================================= */
 .sidebar-footer {
-  padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-
-  .btn-sair {
-    width: 100%;
-    background: transparent;
-    border: 1px solid #ef4444;
-    color: #ef4444;
-    padding: 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: 0.2s;
-    &:hover {
-      background: #ef4444;
-      color: white;
-    }
-  }
+  height: 60px;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-/* --- CONTEÚDO PRINCIPAL (Direita) --- */
-.main-content {
+.sidebar-footer:hover { background-color: rgba(239, 68, 68, 0.1); }
+.sidebar-footer:hover .icon-container, .sidebar-footer:hover .label { color: #ef4444; }
+
+.sidebar-footer .icon-container { width: 80px; min-width: 80px; font-size: 1.2rem; }
+
+/* =========================================
+   CONTEÚDO E TOPO
+   ========================================= */
+.content-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
-  position: relative;
+  overflow: hidden;
 }
 
-/* Barra do Topo */
-.topbar {
-  height: 70px;
-  background: white;
+.top-submenu {
+  height: 60px;
+  background-color: white;
   border-bottom: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 32px;
+  padding: 0 30px;
 }
 
-.user-welcome {
-  color: #334155;
-  font-size: 0.95rem;
-}
+.nav-links { display: flex; gap: 10px; }
 
-.avatar-circle {
-  width: 38px;
-  height: 38px;
-  background: #3b82f6;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
+.nav-links a {
+  text-decoration: none;
+  color: #64748b;
+  padding: 8px 16px;
+  border-radius: 8px;
   font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s;
 }
 
-/* Área onde entra a tabela de OS, Dashboard, etc */
-.content-scrollable {
-  flex: 1;
-  overflow-y: auto;
-  padding: 30px;
-}
+.nav-links a:hover { background: #f1f5f9; color: #0f172a; }
+.nav-links a.active { background: #e0e7ff; color: $purple; }
+.nav-links .disabled { color: #cbd5e1; cursor: not-allowed; }
+
+.user-info { font-size: 0.9rem; color: #64748b; }
+.page-content { flex: 1; overflow-y: auto; padding: 0; }

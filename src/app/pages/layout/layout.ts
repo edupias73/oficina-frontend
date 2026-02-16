@@ -1,21 +1,30 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router'; // <--- 1. Importe o Router
+import { Router, RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
   imports: [CommonModule, RouterLink, RouterOutlet, RouterLinkActive],
   templateUrl: './layout.html',
-  styleUrl: './layout.scss',
+  styleUrl: './layout.scss'
 })
 export class LayoutComponent {
-  // 2. Injete o Router no construtor para poder navegar
+  
+  // Controle de Módulos (Abas Superiores)
+  moduloAtivo: string = 'principal';
+
   constructor(private router: Router) {}
 
-  // 3. Crie a função Sair aqui dentro
+  selecionarModulo(modulo: string) {
+    this.moduloAtivo = modulo;
+  }
+
   sair() {
-    localStorage.removeItem('token'); // Apaga o crachá
-    this.router.navigate(['/login']); // Manda pra fora
+    // Adicionei um confirm para evitar cliques acidentais
+    if(confirm('Deseja realmente sair do sistema?')) {
+      localStorage.removeItem('token');
+      this.router.navigate(['/login']);
+    }
   }
 }
