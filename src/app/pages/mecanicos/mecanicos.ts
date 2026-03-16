@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { HttpClientModule } from '@angular/common/http';
@@ -28,7 +28,7 @@ export class Mecanicos implements OnInit {
   carregando: boolean = false;
 
   // O "private service" funciona agora porque importamos a classe MecanicoService lá em cima
-  constructor(private service: MecanicoService) {}
+  constructor(private service: MecanicoService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.carregarLista();
@@ -40,6 +40,7 @@ export class Mecanicos implements OnInit {
       next: (dados: Mecanico[]) => {
         this.mecanicos = dados;
         this.carregando = false;
+        this.cdr.detectChanges();
       },
       error: (erro: any) => {
         console.error('Erro ao buscar mecânicos', erro);

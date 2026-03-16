@@ -92,7 +92,10 @@
         <span class="disabled">Backup</span>
       </nav>
 
-      <div class="user-info">
+      <div class="user-info" style="display: flex; align-items: center; gap: 15px;">
+        <button (click)="alternarTelaCheia()" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;" title="Tela Cheia">
+          🔲
+        </button>
         <span class="greeting">Olá, <strong>Eduardo</strong></span>
         <div class="status-dot"></div>
       </div>

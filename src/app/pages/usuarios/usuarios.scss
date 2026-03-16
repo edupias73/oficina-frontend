@@ -1,0 +1,115 @@
+// Paleta de Cores Premium SaaS
+$primary: #0f172a;       
+$primary-hover: #1e293b;
+$success: #10b981;       // Verde para Mecânico
+$admin-color: #6366f1;   // Roxo/Azul chique para Admin
+$danger: #ef4444;        
+$bg-color: #f8fafc;      
+$text-dark: #1e293b;
+$text-muted: #64748b;
+$border-color: #e2e8f0;
+$white: #ffffff;
+
+.page-container {
+  padding: 2rem;
+  background-color: $bg-color;
+  min-height: 100vh;
+}
+
+.page-toolbar {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;
+
+  .toolbar-left {
+    h1 { font-size: 1.8rem; color: $text-dark; margin: 0 0 0.3rem 0; font-weight: 800; letter-spacing: -0.5px; }
+    p { color: $text-muted; margin: 0; font-size: 1rem; }
+  }
+
+  .btn-primary {
+    background-color: $primary; color: $white; border: none; padding: 0.8rem 1.5rem;
+    border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
+    transition: all 0.2s ease; box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.2);
+
+    span { font-size: 1.2rem; font-weight: bold; line-height: 1; }
+    &:hover { background-color: $primary-hover; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3); }
+  }
+}
+
+.card-table {
+  background: $white; border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+
+  table {
+    width: 100%; border-collapse: collapse; text-align: left;
+
+    th, td { padding: 1rem 1.5rem; border-bottom: 1px solid $border-color; }
+    th { background-color: #f1f5f9; color: $text-muted; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    tbody tr {
+      transition: background-color 0.2s ease;
+      &:hover { background-color: #f8fafc; }
+      &:last-child td { border-bottom: none; }
+    }
+
+    .text-center { text-align: center; }
+    .id-col { color: $text-muted; font-size: 0.9rem; }
+    .fw-bold { font-weight: 600; color: $text-dark; font-size: 1.05rem; }
+
+    /* Estilo das Badges de Permissão */
+    .status-badge {
+      padding: 0.35rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: inline-block;
+
+      &.admin { background-color: rgba($admin-color, 0.1); color: $admin-color; border: 1px solid rgba($admin-color, 0.2); }
+      &.user { background-color: rgba($success, 0.1); color: darken($success, 10%); border: 1px solid rgba($success, 0.2); }
+    }
+
+    .actions-cell { text-align: right; }
+    .btn-icon { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0.5rem; border-radius: 6px; transition: background-color 0.2s; }
+    .btn-icon.delete:hover { background-color: rgba($danger, 0.1); }
+  }
+}
+
+/* --- MODAL COM EFEITO BLUR NO FUNDO --- */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(5px);
+  display: flex; justify-content: center; align-items: center; z-index: 1000;
+}
+
+.modal-papel {
+  background: $white; border-radius: 16px; width: 100%; max-width: 450px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: modalPulo 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  .modal-header {
+    padding: 1.5rem; border-bottom: 1px solid $border-color; display: flex; justify-content: space-between; align-items: center;
+    h2 { margin: 0; font-size: 1.4rem; color: $text-dark; font-weight: 700; }
+    .btn-fechar { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: $text-muted; transition: color 0.2s; &:hover { color: $danger; } }
+  }
+
+  .form-grid { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+  
+  .grupo-form {
+    display: flex; flex-direction: column; gap: 0.5rem;
+    label { font-size: 0.9rem; font-weight: 600; color: $text-dark; }
+    
+    .input-padrao {
+      padding: 0.8rem 1rem; border: 1px solid $border-color; border-radius: 8px; font-size: 1rem;
+      transition: all 0.2s ease; outline: none; background-color: #f8fafc;
+      &:focus { border-color: #3b82f6; background-color: $white; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+    }
+  }
+
+  .modal-actions {
+    padding: 1.25rem 1.5rem; background-color: #f8fafc; border-top: 1px solid $border-color;
+    border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; justify-content: flex-end; gap: 1rem;
+    button { padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
+    .btn-cancelar { background: $white; border: 1px solid $border-color; color: $text-dark; &:hover { background: #e2e8f0; } }
+    .btn-salvar { background: #3b82f6; border: none; color: $white; &:hover { background: #2563eb; transform: translateY(-1px); } }
+  }
+}
+
+@keyframes modalPulo {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

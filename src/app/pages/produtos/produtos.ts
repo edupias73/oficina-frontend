@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common'; // 👈 1. IMPORTANTE
 import { FormsModule } from '@angular/forms'; // 👈 2. IMPORTANTE
 import { Produto } from '../../models/produto.model';
@@ -22,7 +22,7 @@ export class ProdutosComponent implements OnInit {
 
   modalAberto = false;
 
-  constructor(private service: ProdutoService) {}
+  constructor(private service: ProdutoService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.carregarProdutos();
@@ -32,6 +32,7 @@ export class ProdutosComponent implements OnInit {
     this.service.listar().subscribe({
       next: (dados: Produto[]) => {
         this.listaProdutos = dados;
+        this.cdr.detectChanges();
       },
       error: (erro: any) => console.error('Erro ao buscar produtos', erro),
     });

@@ -21,10 +21,22 @@ export class LayoutComponent {
   }
 
   sair() {
-    // Adicionei um confirm para evitar cliques acidentais
     if(confirm('Deseja realmente sair do sistema?')) {
       localStorage.removeItem('token');
       this.router.navigate(['/login']);
+    }
+  }
+
+  // 👇 NOVA FUNÇÃO PARA TELA CHEIA
+  alternarTelaCheia() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.error(`Erro ao tentar entrar em tela cheia: ${err.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
     }
   }
 }

@@ -1,1 +1,80 @@
-<p>usuarios works!</p>
+<div class="page-container">
+  <div class="page-toolbar">
+    <div class="toolbar-left">
+      <h1>Equipe e Acessos</h1>
+      <p>Gerencie quem pode acessar o sistema da sua oficina</p>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn-primary" (click)="abrirModal()"><span>+</span> Novo Usuário</button>
+    </div>
+  </div>
+
+  <div class="card-table">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Login (E-mail)</th>
+          <th>Nível de Acesso</th>
+          <th class="text-right">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="carregando">
+          <td colspan="4" class="text-center" style="padding: 2rem;">Buscando equipe... ⚙️</td>
+        </tr>
+        
+        <tr *ngIf="!carregando && listaUsuarios.length === 0">
+          <td colspan="4" class="text-center" style="padding: 2rem;">Nenhum usuário cadastrado ainda.</td>
+        </tr>
+
+        <tr *ngFor="let u of listaUsuarios">
+          <td class="id-col">#{{ u.id }}</td>
+          <td class="fw-bold">{{ u.login }}</td>
+          <td>
+            <span class="status-badge" [class.admin]="u.role === 'ADMIN'" [class.user]="u.role === 'USER'">
+              {{ u.role === 'ADMIN' ? 'Dono / Gerente' : 'Mecânico' }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button class="btn-icon delete" (click)="excluir(u.id)" title="Excluir acesso">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarModal">
+  <div class="modal-papel modal-cadastro">
+    <div class="modal-header">
+      <h2>Novo Acesso</h2>
+      <button class="btn-fechar" (click)="fecharModal()">✖</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="grupo-form">
+        <label>Login (E-mail recomendado)</label>
+        <input type="email" class="input-padrao" [(ngModel)]="novoUsuario.login" placeholder="Ex: eduardo@oficina.com">
+      </div>
+
+      <div class="grupo-form">
+        <label>Senha</label>
+        <input type="password" class="input-padrao" [(ngModel)]="novoUsuario.senha" placeholder="Digite a senha de acesso">
+      </div>
+
+      <div class="grupo-form">
+        <label>Permissão no Sistema</label>
+        <select class="input-padrao" [(ngModel)]="novoUsuario.role">
+          <option value="USER">Mecânico (Acesso Restrito)</option>
+          <option value="ADMIN">Dono / Gerente (Acesso Total)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancelar" (click)="fecharModal()">Cancelar</button>
+      <button class="btn-salvar" (click)="salvarUsuario()">Salvar Usuário</button>
+    </div>
+  </div>
+</div>
