@@ -1,52 +1,54 @@
-<div class="login-page">
+<div class="login-container">
   <div class="login-card">
-    <div class="card-header">
-      <div class="logo-area">
-        <span class="icon">🔧</span>
-        <h1>NitroGestor</h1>
-      </div>
-      <p>Gestão inteligente para sua oficina.</p>
+    <div class="login-header">
+      <h1>Nitro<span>Gestor</span></h1>
+      <p>Acesso ao painel da oficina</p>
     </div>
 
-    <form (ngSubmit)="logar()">
-      <div class="input-group">
-        <label>E-mail</label>
-        <div class="input-wrapper">
-          <span class="input-icon">✉️</span>
-          <input
-            type="email"
-            [(ngModel)]="loginData.email"
-            name="email"
-            placeholder="admin@nitrogestor.com"
-            required
-          />
-        </div>
+    <div class="login-body">
+      <div class="alerta-erro" *ngIf="erroLogin">
+        {{ erroLogin }}
       </div>
 
-      <div class="input-group">
+      <div class="grupo-form">
+        <label>Código da Oficina</label>
+        <input
+          type="text"
+          class="input-padrao"
+          [(ngModel)]="loginData.codigoEmpresa"
+          placeholder="Ex: NITRO-001"
+          style="text-transform: uppercase"
+        />
+        <small class="dica">Solicite o código ao gerente da sua unidade.</small>
+      </div>
+
+      <div class="divider"><span>Suas Credenciais</span></div>
+
+      <div class="grupo-form">
+        <label>E-mail de Acesso</label>
+        <input
+          type="email"
+          class="input-padrao"
+          [(ngModel)]="loginData.login"
+          placeholder="seu@email.com"
+        />
+      </div>
+
+      <div class="grupo-form">
         <label>Senha</label>
-        <div class="input-wrapper">
-          <span class="input-icon">🔒</span>
-          <input
-            type="password"
-            [(ngModel)]="loginData.senha"
-            name="password"
-            placeholder="••••••••"
-            required
-          />
-        </div>
+        <input
+          type="password"
+          class="input-padrao"
+          [(ngModel)]="loginData.senha"
+          placeholder="••••••••"
+          (keyup.enter)="entrar()"
+        />
       </div>
 
-      <div class="actions">
-        <label class="checkbox"> <input type="checkbox" /> Lembrar </label>
-        <a href="#">Esqueceu a senha?</a>
-      </div>
-
-      <button type="submit" class="btn-entrar">ENTRAR NO SISTEMA</button>
-    </form>
-
-    <div class="card-footer">
-      <p>© 2026 NitroGestor SaaS</p>
+      <button class="btn-login" (click)="entrar()" [disabled]="carregando">
+        <span *ngIf="!carregando">Entrar no Sistema</span>
+        <span *ngIf="carregando">Autenticando... ⚙️</span>
+      </button>
     </div>
   </div>
 </div>

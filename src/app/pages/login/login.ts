@@ -2,47 +2,59 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './login.html', // Verifique se o nome do arquivo é esse mesmo
+  imports: [CommonModule, FormsModule, HttpClientModule],
+  templateUrl: './login.html',
   styleUrls: ['./login.scss'],
 })
 export class Login {
-  // Objeto que segura os dados do formulário
+  // 👇 O envelope com as 3 chaves do SaaS
   loginData = {
-    email: '', // No HTML você chamou de email
+    codigoEmpresa: '',
+    login: '',
     senha: '',
   };
 
-  carregando = false;
-  mensagemErro = '';
+  carregando: boolean = false;
+  erroLogin: string = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {}
 
-  logar() {
+  entrar() {
+    if (!this.loginData.codigoEmpresa || !this.loginData.login || !this.loginData.senha) {
+      this.erroLogin = 'Preencha todos os campos para acessar.';
+      return;
+    }
+
     this.carregando = true;
-    this.mensagemErro = '';
+    this.erroLogin = '';
 
-    const payload = {
-      login: this.loginData.email,
-      senha: this.loginData.senha,
-    };
-
-    this.authService.login(payload).subscribe({
-      next: (res) => {
-        console.log('Login OK! Redirecionando...');
-
-        // 👇 ESSA É A LINHA MÁGICA QUE TE LEVA PRA HOME
-        this.router.navigate(['/home']);
-      },
-      error: (erro) => {
-        console.error(erro);
+    // 👇 Ajuste a URL se a sua porta for diferente de 8080
+    this.http.post<any>('http://localhost:8080/auth/login', this.loginData).subscribe({
+      next: (resposta) => {
+        // Salva o Token no navegador
+        localStorage.setItem('token', resposta.token);
+        localStorage.setItem('role', resposta.role);
         this.carregando = false;
-        this.mensagemErro = 'Erro ao entrar!';
+
+        // Redireciona pra tela principal (ajuste a rota se a sua chamar '/dashboard')
+        this.router.navigate(['/produtos']);
+      },
+      error: (err) => {
+        this.carregando = false;
+        if (err.status === 401 || err.status === 403) {
+          this.erroLogin = 'Código da oficina, usuário ou senha incorretos.';
+        } else {
+          this.erroLogin = 'Erro de conexão com o servidor.';
+        }
+        console.error('Erro no login', err);
       },
     });
   }
