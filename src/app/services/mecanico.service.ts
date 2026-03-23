@@ -22,4 +22,11 @@ export class MecanicoService {
   cadastrar(mecanico: Mecanico): Observable<Mecanico> {
     return this.http.post<Mecanico>(this.API, mecanico);
   }
+atualizar(mecanico: Mecanico): Observable<Mecanico> {
+    return this.http.put<Mecanico>(`${this.API}/${mecanico.id}`, mecanico);
+  }
+
+  excluir(id: number): Observable<any> {
+    return this.http.delete(`${this.API}/${id}`);
+  }
 }

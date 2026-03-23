@@ -1,6 +1,9 @@
 export interface Produto {
-  id?: number; // O '?' significa que o ID é opcional (pq na hora de criar, ainda não tem ID)
+  id?: number;
   nome: string;
-  preco: number;
-  quantidadeEstoque: number; // 👇 Esse é o campo novo que adicionamos no Java
+  precoCusto: number;
+  precoVenda: number;
+  quantidadeEstoque: number;
+  ativo?: boolean;
+  empresaId?: number; 
 }

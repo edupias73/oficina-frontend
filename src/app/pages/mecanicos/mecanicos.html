@@ -38,8 +38,8 @@
             </span>
           </td>
           <td class="actions">
-            <button class="btn-icon edit" title="Editar">✏️</button>
-            <button class="btn-icon trash" title="Excluir">🗑️</button>
+            <button class="btn-icon edit" title="Editar" (click)="editar(m)">✏️</button>
+            <button class="btn-icon trash" title="Excluir" (click)="excluir(m.id!)">🗑️</button>
           </td>
         </tr>
       </tbody>
@@ -50,7 +50,7 @@
 <div class="modal-overlay" *ngIf="exibirModal">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>Novo Mecânico</h2>
+      <h2>{{ novoMec.id ? 'Editar Mecânico' : 'Novo Mecânico' }}</h2>
       <button class="btn-close" (click)="fecharModal()">×</button>
     </div>
     

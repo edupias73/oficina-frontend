@@ -1,8 +1,8 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  // 👇 AQUI ESTAVA O ERRO! Mude de 'token' para 'meu_token_saas'
-  const token = localStorage.getItem('meu_token_saas');
+  // 👇 AQUI ESTÁ A CORREÇÃO: Buscando na gaveta certa ('token')
+  const token = localStorage.getItem('token');
 
   // 🛑 PARE! Se for a rota de login ou register, não anexe nada. Passa reto.
   if (req.url.includes('/auth/login') || req.url.includes('/auth/register')) {
@@ -13,7 +13,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (token) {
     const cloneReq = req.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, // O espaço depois do Bearer já está certinho!
       },
     });
     return next(cloneReq);

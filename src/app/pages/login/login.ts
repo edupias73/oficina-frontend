@@ -42,6 +42,9 @@ export class Login {
         // Salva o Token no navegador
         localStorage.setItem('token', resposta.token);
         localStorage.setItem('role', resposta.role);
+
+        localStorage.setItem('empresaId', resposta.empresaId);
+
         this.carregando = false;
 
         // Redireciona pra tela principal (ajuste a rota se a sua chamar '/dashboard')

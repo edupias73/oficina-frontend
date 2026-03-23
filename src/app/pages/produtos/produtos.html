@@ -1,90 +1,89 @@
 <div class="page-container">
-  <div class="page-toolbar">
-    <div class="toolbar-left">
-      <h1>Estoque de Produtos</h1>
-      <p>Gerencie suas peças e preços</p>
+  
+    <div class="header-action">
+      <div>
+        <h1>Estoque de Peças e Produtos</h1>
+        <p>Gerencie o seu inventário e precificação</p>
+      </div>
+      <button class="btn-primary" (click)="abrirModal()">
+        + Novo Produto
+      </button>
     </div>
-    <div class="toolbar-actions">
-      <button class="btn-primary" (click)="abrirModal()"><span>+</span> Novo Produto</button>
+  
+    <div class="card-table">
+      <div *ngIf="carregando" class="loading">Carregando dados...</div>
+  
+      <table *ngIf="!carregando">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Custo</th>
+            <th>Venda</th>
+            <th>Estoque</th>
+            <th>Status</th>
+            <th class="actions">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="produtos.length === 0">
+            <td colspan="6" class="empty-state">
+              Nenhum produto cadastrado no estoque.
+            </td>
+          </tr>
+  
+          <tr *ngFor="let p of produtos">
+            <td><strong>{{ p.nome }}</strong></td>
+            <td>R$ {{ p.precoCusto }}</td>
+            <td>R$ {{ p.precoVenda }}</td>
+            <td>{{ p.quantidadeEstoque }} un.</td>
+            <td>
+              <span class="badge" [class.ativo]="p.ativo">
+                {{ p.ativo ? 'Ativo' : 'Inativo' }}
+              </span>
+            </td>
+            <td class="actions">
+              <button class="btn-icon edit" title="Editar" (click)="editar(p)">✏️</button>
+              <button class="btn-icon trash" title="Excluir" (click)="excluir(p.id!)">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
-
-  <div class="card-table">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nome da Peça</th>
-          <th>Preço (R$)</th>
-          <th>Estoque</th>
-          <th class="text-right">Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let p of listaProdutos">
-          <td class="id-col">#{{ p.id }}</td>
-          <td class="fw-bold">{{ p.nome }}</td>
-          <td class="valor">R$ {{ p.preco | number : '1.2-2' }}</td>
-          <td>
-            <span
-              class="status-badge"
-              [class.aberta]="p.quantidadeEstoque < 5"
-              [class.finalizada]="p.quantidadeEstoque >= 5"
-            >
-              {{ p.quantidadeEstoque }} un
-            </span>
-          </td>
-          <td class="actions-cell">
-            <button class="btn-icon delete">🗑️</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="modal-overlay" *ngIf="modalAberto">
-  <div class="modal-papel modal-cadastro">
-    <div class="modal-header">
-      <h2>Novo Produto</h2>
-      <button class="btn-fechar" (click)="fecharModal()">✖</button>
-    </div>
-
-    <div class="form-grid">
-      <div class="grupo-form">
-        <label>Nome da Peça</label>
-        <input
-          type="text"
-          class="input-padrao"
-          [(ngModel)]="novoProduto.nome"
-          placeholder="Ex: Óleo 5w30"
-        />
+  
+  <div class="modal-overlay" *ngIf="exibirModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{ novoProd.id ? 'Editar Produto' : 'Novo Produto' }}</h2>
+        <button class="btn-close" (click)="fecharModal()">×</button>
       </div>
-
-      <div class="grupo-form">
-        <label>Preço de Venda (R$)</label>
-        <input
-          type="number"
-          class="input-padrao"
-          [(ngModel)]="novoProduto.preco"
-          placeholder="0.00"
-        />
+      
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Nome do Produto</label>
+          <input type="text" [(ngModel)]="novoProd.nome" placeholder="Ex: Filtro de Óleo">
+        </div>
+  
+        <div class="form-group row">
+            <div class="col">
+                <label>Preço de Custo (R$)</label>
+                <input type="number" [(ngModel)]="novoProd.precoCusto" placeholder="Ex: 15.00">
+            </div>
+            <div class="col">
+                <label>Preço de Venda (R$)</label>
+                <input type="number" [(ngModel)]="novoProd.precoVenda" placeholder="Ex: 35.00">
+            </div>
+        </div>
+  
+        <div class="form-group">
+          <label>Quantidade em Estoque</label>
+          <input type="number" [(ngModel)]="novoProd.quantidadeEstoque" placeholder="Ex: 10">
+        </div>
       </div>
-
-      <div class="grupo-form">
-        <label>Quantidade em Estoque</label>
-        <input
-          type="number"
-          class="input-padrao"
-          [(ngModel)]="novoProduto.quantidadeEstoque"
-          placeholder="Ex: 10"
-        />
+  
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="fecharModal()">Cancelar</button>
+        <button class="btn-save" (click)="salvar()">Salvar</button>
       </div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn-cancelar" (click)="fecharModal()">Cancelar</button>
-      <button class="btn-salvar" (click)="salvarProduto()">Salvar Produto</button>
     </div>
   </div>
-</div>

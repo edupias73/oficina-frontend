@@ -6,7 +6,7 @@ import { ClientesComponent } from './pages/clientes/clientes';
 import { authGuard } from './core/guards/auth-guard';
 import { VeiculosComponent } from './pages/veiculos/veiculos';
 import { OrdensServicoComponent } from './pages/ordens-servico/ordens-servico';
-import { ProdutosComponent } from './pages/produtos/produtos';
+import { Produtos } from './pages/produtos/produtos';
 import { Mecanicos } from './pages/mecanicos/mecanicos';
 import { Usuarios } from './pages/usuarios/usuarios';
 
@@ -28,7 +28,7 @@ export const routes: Routes = [
       { path: 'clientes', component: ClientesComponent },
       { path: 'veiculos', component: VeiculosComponent },
       { path: 'os', component: OrdensServicoComponent },
-      { path: 'produtos', component: ProdutosComponent },
+      { path: 'produtos', component: Produtos },
 
       // 👇 ÁREA PROTEGIDA: Só o ADMIN entra aqui
       { path: 'mecanicos', component: Mecanicos, canActivate: [adminGuard] },

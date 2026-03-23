@@ -1,28 +1,30 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Produto } from '../models/produto.model'; // Importando o arquivo que criamos no passo 1
+import { Produto } from '../models/produto.model'; // Confirma se o caminho está correto
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ProdutoService {
-  private apiUrl = 'http://localhost:8080/produtos';
 
-  constructor(private http: HttpClient) {}
+  private readonly API = 'http://localhost:8080/produtos';
 
-  // 1. Buscar todos os produtos
+  constructor(private http: HttpClient) { }
+
   listar(): Observable<Produto[]> {
-    return this.http.get<Produto[]>(this.apiUrl);
+    return this.http.get<Produto[]>(this.API);
   }
 
-  // 2. Salvar um novo produto
-  salvar(produto: Produto): Observable<Produto> {
-    return this.http.post<Produto>(this.apiUrl, produto);
+  cadastrar(produto: Produto): Observable<Produto> {
+    return this.http.post<Produto>(this.API, produto);
   }
 
-  // 3. Excluir (Se precisar no futuro)
-  excluir(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  atualizar(produto: Produto): Observable<Produto> {
+    return this.http.put<Produto>(`${this.API}/${produto.id}`, produto);
+  }
+
+  excluir(id: number): Observable<any> {
+    return this.http.delete(`${this.API}/${id}`);
   }
 }
