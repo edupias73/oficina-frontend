@@ -2,13 +2,12 @@ import { Cliente } from './cliente.model';
 
 export interface Veiculo {
   id?: number;
-  modelo: string;
-  marca?: string;
   placa: string;
-  cor?: string;
+  marca: string;
+  modelo: string;
   ano?: number;
-  clienteId?: number; // Para a hora de salvar
-  cliente?: Cliente;  // Para a hora de listar/visualizar na tela
+  cor?: string;
+  clienteId?: number; // ID do dono do carro
+  cliente?: Cliente;  // Objeto completo do dono (opcional)
   ativo?: boolean;
-  empresaId?: number;
 }

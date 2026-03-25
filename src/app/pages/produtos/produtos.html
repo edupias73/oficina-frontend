@@ -3,7 +3,7 @@
     <div class="header-action">
       <div>
         <h1>Estoque de Peças e Produtos</h1>
-        <p>Gerencie o seu inventário e precificação</p>
+        <p>Catálogo geral do seu inventário</p>
       </div>
       <button class="btn-primary" (click)="abrirModal()">
         + Novo Produto
@@ -16,29 +16,38 @@
       <table *ngIf="!carregando">
         <thead>
           <tr>
-            <th>Nome</th>
+            <th>Cód. Fabricante</th>
+            <th>Nome / Descrição</th>
             <th>Custo</th>
             <th>Venda</th>
             <th>Estoque</th>
-            <th>Status</th>
             <th class="actions">Ações</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngIf="produtos.length === 0">
             <td colspan="6" class="empty-state">
-              Nenhum produto cadastrado no estoque.
+              Nenhum produto cadastrado no catálogo.
             </td>
           </tr>
   
           <tr *ngFor="let p of produtos">
-            <td><strong>{{ p.nome }}</strong></td>
-            <td>R$ {{ p.precoCusto }}</td>
-            <td>R$ {{ p.precoVenda }}</td>
-            <td>{{ p.quantidadeEstoque }} un.</td>
             <td>
-              <span class="badge" [class.ativo]="p.ativo">
-                {{ p.ativo ? 'Ativo' : 'Inativo' }}
+              <strong>{{ p.codigoFabricante || 'S/N' }}</strong><br>
+              <small style="color: #666;">{{ p.codigoOriginal }}</small>
+            </td>
+            <td>
+              <strong>{{ p.nome }}</strong><br>
+              <small style="color: #666;">{{ p.descricao }}</small>
+            </td>
+            <td>R$ {{ p.precoCusto }}</td>
+            <td style="color: #0d6efd; font-weight: bold;">R$ {{ p.precoVenda }}</td>
+            <td>
+              <span class="badge" 
+                    [ngStyle]="{'background-color': p.quantidadeEstoque! <= 0 ? '#dc3545' : (p.quantidadeEstoque! < 5 ? '#ffc107' : '#198754'), 
+                                'color': p.quantidadeEstoque! < 5 && p.quantidadeEstoque! > 0 ? '#000' : '#fff',
+                                'padding': '5px 10px', 'border-radius': '5px'}">
+                {{ p.quantidadeEstoque }} un.
               </span>
             </td>
             <td class="actions">
@@ -52,33 +61,51 @@
   </div>
   
   <div class="modal-overlay" *ngIf="exibirModal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 600px;">
       <div class="modal-header">
         <h2>{{ novoProd.id ? 'Editar Produto' : 'Novo Produto' }}</h2>
         <button class="btn-close" (click)="fecharModal()">×</button>
       </div>
       
       <div class="modal-body">
-        <div class="form-group">
-          <label>Nome do Produto</label>
+        
+        <div class="form-group row" style="display: flex; gap: 15px; margin-bottom: 15px;">
+          <div class="col" style="flex: 1;">
+              <label>Cód. Fabricante</label>
+              <input type="text" [(ngModel)]="novoProd.codigoFabricante" placeholder="Ex: BOSCH-123">
+          </div>
+          <div class="col" style="flex: 1;">
+              <label>Cód. Original (Montadora)</label>
+              <input type="text" [(ngModel)]="novoProd.codigoOriginal" placeholder="Ex: 5U0905... ">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>Nome da Peça *</label>
           <input type="text" [(ngModel)]="novoProd.nome" placeholder="Ex: Filtro de Óleo">
         </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>Descrição (Aplicação)</label>
+          <input type="text" [(ngModel)]="novoProd.descricao" placeholder="Ex: Aplica no Gol, Saveiro, Voyage 1.6">
+        </div>
   
-        <div class="form-group row">
-            <div class="col">
+        <div class="form-group row" style="display: flex; gap: 15px;">
+            <div class="col" style="flex: 1;">
                 <label>Preço de Custo (R$)</label>
                 <input type="number" [(ngModel)]="novoProd.precoCusto" placeholder="Ex: 15.00">
             </div>
-            <div class="col">
+            <div class="col" style="flex: 1;">
                 <label>Preço de Venda (R$)</label>
                 <input type="number" [(ngModel)]="novoProd.precoVenda" placeholder="Ex: 35.00">
             </div>
         </div>
-  
-        <div class="form-group">
-          <label>Quantidade em Estoque</label>
-          <input type="number" [(ngModel)]="novoProd.quantidadeEstoque" placeholder="Ex: 10">
+
+        <div *ngIf="novoProd.id" style="margin-top: 20px; padding: 10px; background-color: #f8f9fa; border-radius: 5px; font-size: 0.9em; color: #666;">
+          ℹ️ <strong>Estoque Atual: {{ novoProd.quantidadeEstoque }} un.</strong><br>
+          A quantidade de estoque só pode ser alterada através do módulo de Compras ou Devoluções.
         </div>
+  
       </div>
   
       <div class="modal-footer">

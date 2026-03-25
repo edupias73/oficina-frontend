@@ -16,7 +16,18 @@ import { ProdutoService } from '../../services/produto.service';
 export class Produtos implements OnInit {
   
   produtos: Produto[] = [];
-  novoProd: Produto = { nome: '', precoCusto: 0, precoVenda: 0, quantidadeEstoque: 0 };
+  
+  // 👇 ATUALIZADO: Inicializando com os novos campos de Código e Descrição
+  novoProd: Produto = { 
+    codigoFabricante: '', 
+    codigoOriginal: '', 
+    nome: '', 
+    descricao: '', 
+    precoCusto: 0, 
+    precoVenda: 0, 
+    quantidadeEstoque: 0 
+  };
+  
   exibirModal: boolean = false;
   carregando: boolean = false;
 
@@ -42,7 +53,16 @@ export class Produtos implements OnInit {
   }
 
   abrirModal() {
-    this.novoProd = { nome: '', precoCusto: 0, precoVenda: 0, quantidadeEstoque: 0 };
+    // 👇 ATUALIZADO: Limpando todos os campos (incluindo os novos) ao abrir o modal
+    this.novoProd = { 
+      codigoFabricante: '', 
+      codigoOriginal: '', 
+      nome: '', 
+      descricao: '', 
+      precoCusto: 0, 
+      precoVenda: 0, 
+      quantidadeEstoque: 0 
+    };
     this.exibirModal = true;
   }
 
