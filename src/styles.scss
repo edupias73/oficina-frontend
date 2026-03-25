@@ -1,4 +1,35 @@
 /* ============================================================
+   RESET GLOBAL (Garante que o app ocupe 100% da tela)
+   ============================================================ */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw;
+  height: 100vh;
+  
+  /* Trava qualquer rolagem na janela principal do navegador.
+     Quem vai rolar agora são apenas as áreas internas (como o Kanban). */
+  overflow: hidden !important; 
+  
+  /* Cor de fundo padrão para evitar "flashes" brancos ao carregar */
+  background-color: #f1f5f9; 
+  
+  /* Garante que a fonte seja aplicada no sistema inteiro */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Garante que a tag raiz do Angular também ocupe tudo */
+app-root {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ... aqui embaixo continua o seu @media print que já estava no arquivo ... */
+
+
+
+/* ============================================================
    ESTILO DE IMPRESSÃO GLOBAL (Coloque no final do styles.scss)
    ============================================================ */
 @media print {
