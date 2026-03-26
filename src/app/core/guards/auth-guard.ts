@@ -5,7 +5,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
   // 1. Pega o token do bolso (TEM QUE SER O MESMO NOME DO AUTH.SERVICE)
-  const token = localStorage.getItem('meu_token_saas');
+  const token = localStorage.getItem('token');
 
   console.log('👮‍♂️ AuthGuard verificando acesso...');
 

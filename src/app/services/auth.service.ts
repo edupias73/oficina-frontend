@@ -15,11 +15,10 @@ export class AuthService {
   login(usuario: any) {
     return this.http.post<any>(`${this.apiUrl}/login`, usuario).pipe(
       tap((resposta) => {
-        // 👇 AQUI É O PULO DO GATO
-        // Se no Java o DTO for 'token', aqui tem que ser resposta.token
         if (resposta.token) {
-          localStorage.setItem('meu_token_saas', resposta.token);
-          console.log('TOKEN SALVO COM SUCESSO!'); // Adicione este log pra gente ver
+          // 👇 CORRIGIDO: Salvando com o nome exato que o Guard e o Interceptor procuram
+          localStorage.setItem('token', resposta.token);
+          console.log('✅ TOKEN SALVO COM SUCESSO!'); 
         } else {
           console.error(
             "O Java respondeu, mas não achei o campo 'token'. O que veio foi:",
@@ -31,11 +30,13 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('meu_token_saas');
+    // 👇 CORRIGIDO: Removendo a chave certa
+    localStorage.removeItem('token');
     this.router.navigate(['/login']);
   }
 
   getToken() {
-    return localStorage.getItem('meu_token_saas');
+    // 👇 CORRIGIDO: Buscando a chave certa
+    return localStorage.getItem('token');
   }
 }
