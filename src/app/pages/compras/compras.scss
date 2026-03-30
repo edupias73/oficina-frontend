@@ -1,0 +1,279 @@
+/* --- src/app/pages/compras/compras.scss --- */
+
+.compras-container {
+  padding: 25px;
+  height: 100%;
+  overflow-y: auto; /* Fundamental para rolar a tela dentro do seu layout */
+  box-sizing: border-box;
+}
+
+/* =========================================
+   CABEÇALHO E TABELAS
+   ========================================= */
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+
+  h2 { margin: 0; color: #2c3e50; font-size: 1.5rem; }
+}
+
+.table-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  overflow: hidden;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th {
+      background: #f8f9fa; padding: 15px; text-align: left;
+      color: #6c757d; font-size: 0.85rem; text-transform: uppercase;
+      border-bottom: 2px solid #eaedf1;
+    }
+    td {
+      padding: 15px; border-bottom: 1px solid #f1f5f9;
+      color: #495057; font-size: 0.95rem; vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: #fcfcfc; }
+  }
+}
+
+.valor-verde { color: #10b981; font-weight: bold; }
+.text-center { text-align: center; }
+.text-muted { color: #94a3b8; }
+.mb-20 { margin-bottom: 20px; }
+
+/* =========================================
+   BOTÕES
+   ========================================= */
+.btn-primary {
+  background: #3b82f6; color: white; border: none; padding: 10px 20px;
+  border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s;
+  &:hover { background: #2563eb; }
+}
+.btn-success {
+  background: #10b981; color: white; border: none; padding: 10px 20px;
+  border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%;
+  &:hover { background: #059669; }
+}
+.btn-outline {
+  background: transparent; color: #475569; border: 1px solid #cbd5e1; padding: 8px 15px;
+  border-radius: 6px; cursor: pointer; transition: 0.2s;
+  &:hover { background: #f1f5f9; }
+}
+.btn-danger-sm {
+  background: #ef4444; color: white; border: none; padding: 5px 10px;
+  border-radius: 4px; cursor: pointer;
+  &:hover { background: #dc2626; }
+}
+
+/* =========================================
+   MODAL OVERLAY E ESTRUTURA
+   ========================================= */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(3px);
+  display: flex; justify-content: center; align-items: center; z-index: 9999;
+}
+
+.modal-box {
+  background: white; width: 1000px; max-width: 95vw; border-radius: 12px;
+  max-height: 90vh; display: flex; flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15); animation: fadeUp 0.3s ease-out;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+  padding: 20px 25px; background: #1e293b; color: white;
+  border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center;
+  h3 { margin: 0; font-size: 1.2rem; }
+  .btn-fechar { background: none; border: none; color: #cbd5e1; font-size: 1.8rem; cursor: pointer; line-height: 1; }
+  .btn-fechar:hover { color: white; }
+}
+
+.modal-body {
+  padding: 25px; overflow-y: auto; flex: 1;
+}
+
+.modal-footer {
+  padding: 20px 25px; border-top: 1px solid #e2e8f0; background: #f8fafc;
+  border-radius: 0 0 12px 12px; display: flex; justify-content: flex-end; gap: 15px;
+}
+
+/* =========================================
+   FORMULÁRIOS
+   ========================================= */
+.titulo-sessao { margin: 0 0 15px 0; font-size: 1.05rem; color: #334155; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+.sessao-cinza { background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; }
+
+.form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+.form-grid-4 { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+.align-bottom { align-items: end; }
+
+.form-group {
+  display: flex; flex-direction: column; gap: 6px;
+  label { font-size: 0.85rem; font-weight: 600; color: #64748b; }
+  input, select {
+    padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; color: #334155;
+    &:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+  }
+}
+
+/* =========================================
+   RODAPÉ DA NOTA (Rateio e Valores)
+   ========================================= */
+.rodape-nota { display: flex; gap: 30px; margin-top: 10px; }
+.custos-extras { flex: 1; border-right: 1px solid #e2e8f0; padding-right: 30px; }
+.resumo-valores { flex: 1; background: #f8fafc; padding: 20px; border-radius: 8px; }
+
+.texto-vermelho { color: #ef4444; }
+.mt-15 { margin-top: 15px; }
+.mb-10 { margin-bottom: 10px; }
+
+.box-rateio {
+  background: #eff6ff; border: 1px solid #bfdbfe; padding: 15px; border-radius: 8px;
+  small { display: block; color: #64748b; margin-top: 5px; margin-left: 28px; font-size: 0.8rem; }
+}
+
+.linha-resumo {
+  display: flex; justify-content: space-between; margin-bottom: 12px; color: #475569; font-size: 0.95rem;
+}
+.border-bottom { border-bottom: 1px solid #cbd5e1; padding-bottom: 12px; }
+.total-destaque { font-size: 1.3rem; font-weight: bold; color: #10b981; margin-top: 10px; }
+
+/* Custom Checkbox */
+.checkbox-container { display: flex; align-items: center; cursor: pointer; font-size: 0.95rem; color: #1e40af; }
+.checkbox-container input { display: none; }
+.checkmark { height: 20px; width: 20px; background-color: white; border: 2px solid #3b82f6; border-radius: 4px; margin-right: 10px; display: inline-flex; align-items: center; justify-content: center; }
+.checkbox-container input:checked ~ .checkmark { background-color: #3b82f6; }
+.checkbox-container input:checked ~ .checkmark:after { content: "✔"; color: white; font-size: 14px; }
+/* --- ADIÇÕES PARA O MODAL DE BUSCA (PDV) --- */
+
+/* Estilo do Grupo Input + Lupa colados */
+.input-group-lupa {
+  display: flex;
+  input {
+    flex: 1;
+    border-radius: 6px 0 0 6px !important;
+    border-right: none !important;
+    background-color: #f8fafc;
+  }
+  .btn-lupa {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0 15px;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    transition: 0.2s;
+    &:hover { background: #2563eb; }
+  }
+}
+
+/* O Input gigantão de busca do modal */
+.input-busca-gigante {
+  width: 100%;
+  padding: 15px 20px;
+  font-size: 1.1rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: #1e293b;
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  }
+}
+
+/* O destaque da linha quando passa o teclado ou mouse */
+.linha-ativa {
+  background-color: #eff6ff !important; /* Fundo azul bem claro */
+  border-left: 4px solid #3b82f6 !important; /* Faixa azul lateral */
+  
+  td {
+    color: #1e40af !important; /* Texto mais escuro */
+  }
+}
+.mt-15 { margin-top: 15px; }
+.py-4 { padding-top: 20px; padding-bottom: 20px; }
+.fw-bold { font-weight: bold; }
+
+/* --- ADIÇÕES PARA O RASCUNHO E CADASTRO RÁPIDO --- */
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.badge-rascunho {
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fde68a;
+}
+
+.badge-efetivada {
+  background-color: #d1fae5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.btn-success-sm {
+  background: #10b981; color: white; border: none; padding: 6px 12px;
+  border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold;
+  &:hover { background: #059669; }
+}
+
+.mr-2 { margin-right: 8px; }
+.block { display: block; }
+/* Efeito de clique na linha do rascunho */
+.linha-clicavel {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  
+  &:hover td {
+    background-color: #f1f5f9 !important; /* Destaque sutil */
+  }
+}
+
+/* Modal de Markup */
+.table-markup {
+  border-collapse: collapse;
+  th { text-align: left; padding: 10px; border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 0.85rem; text-transform: uppercase;}
+  td { padding: 15px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  
+  .input-with-symbol {
+    position: relative;
+    display: flex;
+    align-items: center;
+    
+    .symbol { position: absolute; color: #94a3b8; font-weight: bold; font-size: 0.9rem; pointer-events: none; }
+    
+    /* Variação para % (símbolo na direita) e R$ (símbolo na esquerda) */
+    &:has(span:last-child) { .symbol { right: 10px; } .input-calc { padding-right: 25px; } }
+    &:has(span:first-child) { .symbol { left: 10px; } .input-calc { padding-left: 30px; } }
+  }
+
+  .input-calc {
+    width: 140px; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: bold; font-size: 1rem; color: #1e293b;
+    &:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+  }
+  
+  .destaque-verde { color: #059669; background-color: #ecfdf5; border-color: #a7f3d0; }
+}
+
+.w-100 { width: 100%; }
+.mb-15 { margin-bottom: 15px; }
+.px-4 { padding-left: 1.5rem; padding-right: 1.5rem; }

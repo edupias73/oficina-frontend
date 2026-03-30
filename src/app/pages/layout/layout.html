@@ -66,11 +66,14 @@
         <a routerLink="/produtos" routerLinkActive="active">Produtos</a>
         <a routerLink="/mecanicos" routerLinkActive="active">Mecânicos</a>
         <a routerLink="/usuarios" routerLinkActive="active">Usuários</a>
+        <a routerLink="/fornecedores" routerLinkActive="active">Fornecedores</a>
       </nav>
 
-      <nav class="nav-links" *ngIf="moduloAtivo === 'estoque'">
+   <nav class="nav-links" *ngIf="moduloAtivo === 'estoque'">
         <a routerLink="/produtos" routerLinkActive="active">Controle Estoque</a>
-        <span class="disabled">Entrada NF</span>
+        
+        <a routerLink="/compras" routerLinkActive="active">Entrada NF</a>
+        
         <span class="disabled">Baixa Manual</span>
       </nav>
 

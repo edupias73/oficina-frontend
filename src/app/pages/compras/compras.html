@@ -1,0 +1,317 @@
+<div class="compras-container">
+  <div class="header-actions">
+    <h2>Entrada de Notas (Compras)</h2>
+    <button class="btn-primary" (click)="abrirModal()">+ Nova Compra</button>
+  </div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Nº Nota</th>
+          <th>Fornecedor</th>
+          <th>Data</th>
+          <th>Status</th>
+          <th>Total</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let compra of listaCompras" 
+            [class.linha-clicavel]="compra.status === 'RASCUNHO'"
+            (click)="abrirModalEdicao(compra)">
+          
+          <td class="fw-bold">{{ compra.numeroNota || 'S/N' }}</td>
+          <td>{{ compra.fornecedor?.nomeFantasia }}</td>
+          <td>{{ compra.dataCompra | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <span class="badge" [ngClass]="compra.status === 'RASCUNHO' ? 'badge-rascunho' : 'badge-efetivada'">
+              {{ compra.status === 'RASCUNHO' ? '📝 Rascunho' : '✅ Efetivada' }}
+            </span>
+          </td>
+          <td class="valor-verde">{{ compra.totalGeral | currency:'BRL' }}</td>
+          <td>
+            <ng-container *ngIf="compra.status === 'RASCUNHO'">
+              <button class="btn-success-sm mr-2" (click)="efetivarCompra(compra.id, $event)" title="Lançar no Estoque">✔ Efetivar</button>
+              <button class="btn-danger-sm" (click)="excluirCompra(compra.id, $event)" title="Apagar Rascunho">🗑️</button>
+            </ng-container>
+            <ng-container *ngIf="compra.status === 'EFETIVADA'">
+              <button class="btn-outline">Ver Detalhes</button>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="modalAberto">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>📦 {{ novaCompra.id ? 'Editando Rascunho' : 'Registar Nova Compra' }}</h3>
+      <button class="btn-fechar" (click)="fecharModal()">×</button>
+    </div>
+    <div class="modal-body">
+      
+      <div class="sessao-cinza">
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label>Fornecedor *</label>
+            <select [(ngModel)]="novaCompra.fornecedorId">
+              <option [ngValue]="null">Selecione...</option>
+              <option *ngFor="let f of listaFornecedores" [value]="f.id">{{ f.nomeFantasia }}</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Nº da Nota</label><input type="text" [(ngModel)]="novaCompra.numeroNota"></div>
+          <div class="form-group"><label>Data Compra</label><input type="date" [(ngModel)]="novaCompra.dataCompra"></div>
+        </div>
+      </div>
+
+      <h4 class="titulo-sessao">Itens da Nota</h4>
+      <div class="form-grid-4 align-bottom">
+        <div class="form-group" style="grid-column: span 1;">
+          <label>Pesquisar Produto</label>
+          <div class="input-group-lupa">
+            <input type="text" readonly placeholder="Clique na lupa ➔" [value]="itemAtual.nomeProduto" (click)="abrirModalBuscaProduto()" style="cursor: pointer;">
+            <button class="btn-lupa" (click)="abrirModalBuscaProduto()">🔍</button>
+          </div>
+        </div>
+        <div class="form-group"><label>Quantidade</label><input type="number" [(ngModel)]="itemAtual.quantidade" min="1"></div>
+        <div class="form-group"><label>Custo Unit. (R$)</label><input type="number" [(ngModel)]="itemAtual.precoUnitario" step="0.01"></div>
+        <div class="form-group"><button class="btn-success" (click)="abrirModalMarkup()">Formar Preço e Incluir</button></div>
+      </div>
+
+      <div class="table-card mb-20">
+        <table>
+          <thead><tr><th>Produto</th><th>Qtd</th><th>Custo Unit.</th><th>Subtotal</th><th></th></tr></thead>
+          <tbody>
+            <tr *ngFor="let item of novaCompra.itens; let i = index">
+              <td>
+                <span class="text-muted small block">{{ item.codigoFabricante || 'S/N' }}</span>
+                <span class="fw-bold">{{ item.nomeProduto }}</span>
+              </td>
+              <td>{{ item.quantidade }}</td>
+              <td>{{ item.precoUnitario | currency:'BRL' }}</td>
+              <td>{{ item.subtotal | currency:'BRL' }}</td>
+              <td><button class="btn-danger-sm" (click)="removerItemDaLista(i)">X</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="rodape-nota">
+        <div class="custos-extras">
+          <h4 class="titulo-sessao">Custos Extras</h4>
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label>Frete (R$)</label>
+              <input type="number" [(ngModel)]="novaCompra.frete">
+            </div>
+            <div class="form-group">
+              <label>Impostos (R$)</label>
+              <input type="number" [(ngModel)]="novaCompra.impostos">
+            </div>
+            <div class="form-group">
+              <label>Desconto (R$)</label>
+              <input type="number" class="texto-vermelho" [(ngModel)]="novaCompra.desconto">
+            </div>
+          </div>
+          
+          <div class="box-rateio mt-15">
+            <label class="checkbox-container">
+              <input type="checkbox" [(ngModel)]="novaCompra.ratearCustos">
+              <span class="checkmark"></span>
+              <strong>Diluir custos extras no preço de custo das peças</strong>
+            </label>
+            <small>Soma o frete e impostos ao custo unitário para cálculo de lucro futuro.</small>
+          </div>
+        </div>
+
+        <div class="resumo-valores">
+          <h4 class="titulo-sessao">Resumo da Nota</h4>
+          <div class="linha-resumo">
+            <span>Total dos Produtos:</span>
+            <span>{{ calcularTotalProdutos() | currency:'BRL' }}</span>
+          </div>
+          <div class="linha-resumo">
+            <span>(+) Frete & Impostos:</span>
+            <span>{{ (novaCompra.frete + novaCompra.impostos) | currency:'BRL' }}</span>
+          </div>
+          <div class="linha-resumo texto-vermelho mb-10 border-bottom">
+            <span>(-) Descontos:</span>
+            <span>{{ novaCompra.desconto | currency:'BRL' }}</span>
+          </div>
+          <div class="linha-resumo total-destaque">
+            <span>Total a Pagar:</span>
+            <span>{{ calcularTotalGeral() | currency:'BRL' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" (click)="fecharModal()">Fechar (Auto-Save)</button>
+      <button class="btn-primary" (click)="salvarRascunho()">💾 Gravar Manualmente</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="modalBuscaProdutoAberto" style="z-index: 10000;">
+  <div class="modal-box" style="width: 700px;">
+    
+    <div class="modal-header d-flex justify-content-between align-items-center">
+      <h3 style="margin: 0;">🔍 Localizar Peça no Estoque</h3>
+      
+      <div style="display: flex; gap: 15px; align-items: center;">
+        <button class="btn-success-sm" style="background: #10b981;" (click)="abrirModalNovoProduto()">+ Cadastrar Peça Nova</button>
+        <button class="btn-fechar" (click)="fecharModalBuscaProduto()">×</button>
+      </div>
+    </div>
+
+    <div class="modal-body" style="background: #f8fafc;">
+      <input type="text" class="input-busca-gigante" 
+             placeholder="Digite o nome ou código da peça e use as setas do teclado..." 
+             [(ngModel)]="termoBuscaProduto" 
+             (input)="filtrarProdutos()" 
+             (keydown)="navegarComTeclado($event)" 
+             autofocus>
+
+      <div class="table-card mt-15" style="max-height: 350px; overflow-y: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nome da Peça</th>
+              <th>Custo Atual</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of produtosFiltrados; let i = index" 
+                [class.linha-ativa]="i === indiceProdutoSelecionado"
+                (click)="confirmarProdutoBusca(p)"
+                style="cursor: pointer;">
+              <td class="text-muted">{{ p.codigoFabricante || 'S/N' }}</td>
+              <td class="fw-bold">{{ p.nome }}</td>
+              <td class="valor-verde">{{ p.precoCusto | currency:'BRL' }}</td>
+            </tr>
+            <tr *ngIf="produtosFiltrados.length === 0">
+              <td colspan="3" class="text-center text-muted py-4">Nenhuma peça encontrada para "{{termoBuscaProduto}}".</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="modalNovoProdutoAberto" style="z-index: 10005;">
+  <div class="modal-box" style="width: 500px;">
+    <div class="modal-header bg-primary">
+      <h3>✨ Nova Peça Rápida</h3>
+      <button class="btn-fechar" (click)="fecharModalNovoProduto()">×</button>
+    </div>
+    <div class="modal-body">
+      
+      <div class="form-group mb-10">
+        <label>Nome da Peça *</label>
+        <input type="text" [(ngModel)]="novoProduto.nome" placeholder="Ex: Pastilha de Freio Cobreq">
+      </div>
+      
+      <div class="form-grid-2 mb-10">
+        <div class="form-group">
+          <label>Código Fabricante</label>
+          <input type="text" [(ngModel)]="novoProduto.codigoFabricante">
+        </div>
+        <div class="form-group">
+          <label>Descrição (Opcional)</label>
+          <input type="text" [(ngModel)]="novoProduto.descricao" placeholder="Aplicação, detalhes...">
+        </div>
+      </div>
+      
+      <div class="box-rateio mt-15" style="background: #f8fafc; border-color: #e2e8f0;">
+        <small class="text-muted block text-center">
+          💡 O preço de custo e os lucros desta peça serão calculados logo em seguida na formação de preços!
+        </small>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" (click)="fecharModalNovoProduto()">Cancelar</button>
+      <button class="btn-primary" (click)="salvarNovoProduto()">Salvar e Formar Preço</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="modalMarkupAberto" style="z-index: 10010;">
+  <div class="modal-box" style="width: 750px;">
+    <div class="modal-header" style="background: #3b82f6; color: white;">
+      <h3>💰 Formação de Preço (Markup)</h3>
+      <button class="btn-fechar" style="color: white;" (click)="modalMarkupAberto = false">×</button>
+    </div>
+    <div class="modal-body">
+      
+      <div class="sessao-cinza mb-15" style="display: flex; justify-content: space-between;">
+        <div>
+          <span class="text-muted small block">Peça selecionada</span>
+          <strong>{{ itemAtual.codigoFabricante }} - {{ itemAtual.nomeProduto }}</strong>
+        </div>
+        <div style="text-align: right;">
+          <span class="text-muted small block">Qtd: {{ itemAtual.quantidade }} | Custo Un.:</span>
+          <strong class="texto-vermelho" style="font-size: 1.25rem;">{{ itemAtual.precoUnitario | currency:'BRL' }}</strong>
+        </div>
+      </div>
+
+      <table class="table-markup w-100">
+        <thead>
+          <tr>
+            <th>Tipo de Preço</th>
+            <th>Preço Atual</th>
+            <th>Markup (%)</th>
+            <th>Novo Preço (R$)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fw-bold">Varejo</td>
+            <td class="text-muted">{{ itemAtual.precoVendaAtual | currency:'BRL' }}</td>
+            <td>
+              <div class="input-with-symbol">
+                <input type="number" class="input-calc" [(ngModel)]="itemAtual.markupVarejo" (input)="calcularPorMarkup('VAREJO')">
+                <span class="symbol">%</span>
+              </div>
+            </td>
+            <td>
+              <div class="input-with-symbol">
+                <span class="symbol">R$</span>
+                <input type="number" class="input-calc destaque-verde" [(ngModel)]="itemAtual.novoPrecoVarejo" (input)="calcularPorPreco('VAREJO')">
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">Maiorista</td>
+            <td class="text-muted">{{ itemAtual.precoMaioristaAtual | currency:'BRL' }}</td>
+            <td>
+              <div class="input-with-symbol">
+                <input type="number" class="input-calc" [(ngModel)]="itemAtual.markupMaiorista" (input)="calcularPorMarkup('MAIORISTA')">
+                <span class="symbol">%</span>
+              </div>
+            </td>
+            <td>
+              <div class="input-with-symbol">
+                <span class="symbol">R$</span>
+                <input type="number" class="input-calc destaque-verde" [(ngModel)]="itemAtual.novoPrecoMaiorista" (input)="calcularPorPreco('MAIORISTA')">
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <small class="text-muted block mt-15 text-center">
+        💡 Digite a porcentagem ou o valor final. O sistema atualiza o cadastro da peça quando a compra for efetivada!
+      </small>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-outline" (click)="modalMarkupAberto = false">Voltar</button>
+      <button class="btn-success px-4" (click)="confirmarMarkupEAdicionar()">Confirmar e Incluir Peça</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+/* Apenas copiamos as classes base que garantem o layout perfeito do Nitro Gestor */
+.compras-container { padding: 25px; height: 100%; overflow-y: auto; box-sizing: border-box; }
+.header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; h2 { margin: 0; color: #2c3e50; font-size: 1.5rem; } }
+.table-card { background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; table { width: 100%; border-collapse: collapse; th { background: #f8f9fa; padding: 15px; text-align: left; color: #6c757d; font-size: 0.85rem; text-transform: uppercase; border-bottom: 2px solid #eaedf1; } td { padding: 15px; border-bottom: 1px solid #f1f5f9; color: #495057; font-size: 0.95rem; vertical-align: middle; } tr:last-child td { border-bottom: none; } tr:hover td { background-color: #fcfcfc; } } }
+.btn-primary { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; &:hover { background: #2563eb; } }
+.btn-outline { background: transparent; color: #475569; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; &:hover { background: #f1f5f9; } }
+.btn-danger-sm { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; &:hover { background: #dc2626; } }
+.input-group-lupa { display: flex; input { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px 0 0 6px; outline: none; &:focus { border-color: #3b82f6; } } .btn-lupa { background: #f1f5f9; border: 1px solid #cbd5e1; border-left: none; padding: 0 15px; border-radius: 0 6px 6px 0; cursor: pointer; } }
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(3px); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+.modal-box { background: white; border-radius: 12px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.15); animation: fadeUp 0.3s ease-out; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.modal-header { padding: 20px 25px; background: #1e293b; color: white; border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center; h3 { margin: 0; font-size: 1.2rem; } .btn-fechar { background: none; border: none; color: #cbd5e1; font-size: 1.8rem; cursor: pointer; } .btn-fechar:hover { color: white; } }
+.modal-body { padding: 25px; overflow-y: auto; flex: 1; }
+.modal-footer { padding: 20px 25px; border-top: 1px solid #e2e8f0; background: #f8fafc; border-radius: 0 0 12px 12px; display: flex; justify-content: flex-end; gap: 15px; }
+.titulo-sessao { margin: 0 0 15px 0; font-size: 1.05rem; color: #334155; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+.sessao-cinza { background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; }
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; label { font-size: 0.85rem; font-weight: 600; color: #64748b; } input { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; outline: none; &:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); } } }
+.fw-bold { font-weight: bold; } .text-center { text-align: center; } .text-muted { color: #94a3b8; } .py-4 { padding-top: 20px; padding-bottom: 20px; } .mt-15 { margin-top: 15px; } .mr-2 { margin-right: 8px; }

@@ -1,0 +1,97 @@
+<div class="compras-container"> <div class="header-actions">
+    <h2>🏢 Gestão de Fornecedores</h2>
+    <div style="display: flex; gap: 15px;">
+      <div class="input-group-lupa" style="width: 300px;">
+        <input type="text" placeholder="Procurar por nome ou CNPJ..." [(ngModel)]="termoBusca" (input)="filtrarFornecedores()">
+        <button class="btn-lupa">🔍</button>
+      </div>
+      <button class="btn-primary" (click)="abrirModalCadastro()">+ Novo Fornecedor</button>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Nome Fantasia</th>
+          <th>CNPJ</th>
+          <th>Telefone</th>
+          <th>E-mail</th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let f of listaFornecedores">
+          <td class="fw-bold">{{ f.nomeFantasia }}</td>
+          <td>{{ f.cnpj }}</td>
+          <td>{{ f.telefone || 'S/N' }}</td>
+          <td>{{ f.email || 'S/N' }}</td>
+          <td class="text-center">
+            <button class="btn-outline mr-2" (click)="abrirModalEdicao(f)">✏️ Editar</button>
+            <button class="btn-danger-sm" (click)="excluirFornecedor(f.id)">🗑️</button>
+          </td>
+        </tr>
+        <tr *ngIf="listaFornecedores.length === 0">
+          <td colspan="5" class="text-center text-muted py-4">Nenhum fornecedor encontrado.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="modalAberto">
+  <div class="modal-box" style="width: 800px;">
+    
+    <div class="modal-header">
+      <h3>{{ modoEdicao ? '✏️ Editar Fornecedor' : '🏢 Novo Fornecedor' }}</h3>
+      <button class="btn-fechar" (click)="fecharModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="sessao-cinza">
+        <h4 class="titulo-sessao">Dados Principais</h4>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Nome Fantasia *</label>
+            <input type="text" [(ngModel)]="fornecedorAtual.nomeFantasia" placeholder="Nome comercial da loja">
+          </div>
+          <div class="form-group">
+            <label>Razão Social</label>
+            <input type="text" [(ngModel)]="fornecedorAtual.razaoSocial" placeholder="Nome jurídico">
+          </div>
+        </div>
+        
+        <div class="form-grid-3 mt-15">
+          <div class="form-group">
+            <label>CNPJ *</label>
+            <input type="text" [(ngModel)]="fornecedorAtual.cnpj" placeholder="00.000.000/0000-00">
+          </div>
+          <div class="form-group">
+            <label>Telefone</label>
+            <input type="text" [(ngModel)]="fornecedorAtual.telefone">
+          </div>
+          <div class="form-group">
+            <label>E-mail</label>
+            <input type="email" [(ngModel)]="fornecedorAtual.email">
+          </div>
+        </div>
+      </div>
+
+      <div class="sessao-cinza">
+        <h4 class="titulo-sessao">Localização</h4>
+        <div class="form-group">
+          <label>Endereço Completo</label>
+          <input type="text" [(ngModel)]="fornecedorAtual.endereco" placeholder="Rua, Número, Bairro, Cidade - Estado">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-outline" (click)="fecharModal()">Cancelar</button>
+      <button class="btn-primary" (click)="salvarFornecedor()">
+        {{ modoEdicao ? 'Guardar Alterações' : 'Cadastrar Fornecedor' }}
+      </button>
+    </div>
+    
+  </div>
+</div>
