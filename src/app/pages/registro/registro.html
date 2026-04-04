@@ -1,0 +1,133 @@
+<div class="registro-container">
+  <div class="registro-marketing">
+    <div class="marketing-content">
+      <div class="logo">
+        <span class="icon">⚙️</span>
+        <h1>Nitro Gestor</h1>
+      </div>
+
+      <h2>Acelere os lucros da sua oficina.</h2>
+      <p class="subtitle">
+        Junte-se a centenas de oficinas que automatizaram as suas O.S., stocks e finanças.
+      </p>
+
+      <div class="beneficios">
+        <div class="beneficio-item">
+          <span class="check">✔</span>
+          <div>
+            <strong>Controle Total de O.S.</strong>
+            <span>Crie orçamentos, envie pelo WhatsApp e acompanhe o Kanban.</span>
+          </div>
+        </div>
+        <div class="beneficio-item">
+          <span class="check">✔</span>
+          <div>
+            <strong>Estoque Inteligente</strong>
+            <span>Formação de preço (Markup), cálculo de custo e extrato de peças.</span>
+          </div>
+        </div>
+        <div class="beneficio-item">
+          <span class="check">✔</span>
+          <div>
+            <strong>Gestão de Mecânicos</strong>
+            <span>Cálculo automático de comissões por serviço executado.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="registro-form-wrapper">
+    <div class="registro-box">
+      <div *ngIf="sucesso" class="sucesso-box">
+        <div class="icone-sucesso">✅</div>
+        <h2>Oficina Registada!</h2>
+        <p>A sua estrutura foi criada com sucesso.</p>
+        <div class="dados-importantes">
+          <small>Guarda este código para fazer Login:</small>
+          <h3>{{ dadosRegistro.codigoEmpresa }}</h3>
+        </div>
+        <p class="redirecionando">A redirecionar para o Login...</p>
+      </div>
+
+      <div *ngIf="!sucesso">
+        <div class="form-header">
+          <h2>Criar Conta</h2>
+          <p>Configure a sua oficina em menos de 1 minuto.</p>
+        </div>
+
+        <div class="alert-error" *ngIf="erro">{{ erro }}</div>
+
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Nome da Oficina *</label>
+            <input
+              type="text"
+              [(ngModel)]="dadosRegistro.nomeFantasia"
+              (blur)="gerarCodigoAutomatico()"
+              placeholder="Ex: Turbo auto service"
+              [disabled]="carregando"
+            />
+          </div>
+          <div class="form-group">
+            <label>CNPJ</label>
+            <input
+              type="text"
+              [(ngModel)]="dadosRegistro.cnpj"
+              placeholder="00.000.000/0001-00"
+              [disabled]="carregando"
+            />
+          </div>
+          <div class="form-group">
+            <label>WhatsApp / Telefone</label>
+            <input
+              type="text"
+              [(ngModel)]="dadosRegistro.telefone"
+              placeholder="(00) 00000-0000"
+              [disabled]="carregando"
+            />
+          </div>
+
+          <div class="form-group full-width box-destaque">
+            <label>Código de Acesso da Oficina (Opcional)</label>
+            <input
+              type="text"
+              [(ngModel)]="dadosRegistro.codigoEmpresa"
+              placeholder="Gerado automaticamente se vazio"
+              [disabled]="carregando"
+            />
+            <small>Os seus mecânicos usarão este código para entrar no sistema.</small>
+          </div>
+
+          <h4 class="sessao-titulo full-width">Dados do Administrador</h4>
+          <div class="form-group full-width">
+            <label>E-mail (Login) *</label>
+            <input
+              type="email"
+              [(ngModel)]="dadosRegistro.login"
+              placeholder="teu@email.com"
+              [disabled]="carregando"
+            />
+          </div>
+          <div class="form-group full-width">
+            <label>Senha *</label>
+            <input
+              type="password"
+              [(ngModel)]="dadosRegistro.senha"
+              placeholder="Cria uma senha forte"
+              [disabled]="carregando"
+            />
+          </div>
+        </div>
+
+        <button class="btn-primary" (click)="registrar()" [disabled]="carregando">
+          {{ carregando ? 'A preparar oficina...' : 'Criar Conta e Começar' }}
+        </button>
+
+        <p class="login-link">
+          Já tem conta? <a href="javascript:void(0)" (click)="irParaLogin()"> login aqui</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

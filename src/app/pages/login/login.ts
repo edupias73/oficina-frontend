@@ -2,17 +2,16 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
 })
 export class Login {
-  // 👇 O envelope com as 3 chaves do SaaS
   loginData = {
     codigoEmpresa: '',
     login: '',
@@ -22,8 +21,9 @@ export class Login {
   carregando: boolean = false;
   erroLogin: string = '';
 
+  // 👇 Injetamos o AuthService
   constructor(
-    private http: HttpClient,
+    private authService: AuthService,
     private router: Router,
   ) {}
 
@@ -36,18 +36,11 @@ export class Login {
     this.carregando = true;
     this.erroLogin = '';
 
-    // 👇 Ajuste a URL se a sua porta for diferente de 8080
-    this.http.post<any>('http://localhost:8080/auth/login', this.loginData).subscribe({
-      next: (resposta) => {
-        // Salva o Token no navegador
-        localStorage.setItem('token', resposta.token);
-        localStorage.setItem('role', resposta.role);
-
-        localStorage.setItem('empresaId', resposta.empresaId);
-
+    // 👇 Chamando o serviço do jeito certo
+    this.authService.login(this.loginData).subscribe({
+      next: () => {
         this.carregando = false;
-
-        // Redireciona pra tela principal (ajuste a rota se a sua chamar '/dashboard')
+        // O token já foi salvo lá no AuthService (pelo 'tap'). Só precisamos navegar!
         this.router.navigate(['/produtos']);
       },
       error: (err) => {
@@ -60,5 +53,9 @@ export class Login {
         console.error('Erro no login', err);
       },
     });
+  }
+
+  irParaRegistro() {
+    this.router.navigate(['/registro']);
   }
 }

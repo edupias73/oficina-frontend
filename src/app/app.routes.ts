@@ -11,12 +11,14 @@ import { Mecanicos } from './pages/mecanicos/mecanicos';
 import { Usuarios } from './pages/usuarios/usuarios';
 import { ComprasComponent } from './pages/compras/compras';
 import { FornecedoresComponent } from './pages/fornecedores/fornecedores';
+import { RegistroComponent } from './pages/registro/registro';
 // 👇 AJUSTE O CAMINHO: Se o seu authGuard está em core/guards,
 // coloque o adminGuard lá também para não dar erro de pasta!
 import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
+  { path: 'registro', component: RegistroComponent },
 
   {
     path: '',

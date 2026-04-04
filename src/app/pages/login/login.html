@@ -1,54 +1,64 @@
-<div class="login-container">
-  <div class="login-card">
-    <div class="login-header">
-      <h1>Nitro<span>Gestor</span></h1>
-      <p>Acesso ao painel da oficina</p>
+<div class="login-split">
+  <div class="split-left">
+    <div class="logo-container">
+      <h1>⚙️ Nitro Gestor</h1>
+      <p>Gestão Inteligente para a sua Oficina</p>
     </div>
+  </div>
 
-    <div class="login-body">
-      <div class="alerta-erro" *ngIf="erroLogin">
-        {{ erroLogin }}
+  <div class="split-right">
+    <div class="form-container">
+      <h2 class="form-title">Acesse sua conta</h2>
+
+      <div class="alert-error" *ngIf="erroLogin">{{ erroLogin }}</div>
+
+      <form (ngSubmit)="entrar()">
+        <div class="input-group">
+          <label>Código da Oficina</label>
+          <input
+            type="text"
+            name="codigo"
+            [(ngModel)]="loginData.codigoEmpresa"
+            placeholder="Ex: OFC-001"
+            autocomplete="off"
+            style="text-transform: uppercase"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Usuário (E-mail)</label>
+          <input
+            type="email"
+            name="login"
+            [(ngModel)]="loginData.login"
+            placeholder="seu@email.com"
+            autocomplete="username"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Senha</label>
+          <input
+            type="password"
+            name="senha"
+            [(ngModel)]="loginData.senha"
+            placeholder="********"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn-entrar" [disabled]="carregando">
+          {{ carregando ? 'A entrar...' : 'Entrar' }}
+        </button>
+      </form>
+
+      <div class="registro-link">
+        <p>Sua oficina ainda não usa o Nitro Gestor?</p>
+        <a href="javascript:void(0)" (click)="irParaRegistro()">Criar uma conta agora</a>
       </div>
-
-      <div class="grupo-form">
-        <label>Código da Oficina</label>
-        <input
-          type="text"
-          class="input-padrao"
-          [(ngModel)]="loginData.codigoEmpresa"
-          placeholder="Ex: NITRO-001"
-          style="text-transform: uppercase"
-        />
-        <small class="dica">Solicite o código ao gerente da sua unidade.</small>
-      </div>
-
-      <div class="divider"><span>Suas Credenciais</span></div>
-
-      <div class="grupo-form">
-        <label>E-mail de Acesso</label>
-        <input
-          type="email"
-          class="input-padrao"
-          [(ngModel)]="loginData.login"
-          placeholder="seu@email.com"
-        />
-      </div>
-
-      <div class="grupo-form">
-        <label>Senha</label>
-        <input
-          type="password"
-          class="input-padrao"
-          [(ngModel)]="loginData.senha"
-          placeholder="••••••••"
-          (keyup.enter)="entrar()"
-        />
-      </div>
-
-      <button class="btn-login" (click)="entrar()" [disabled]="carregando">
-        <span *ngIf="!carregando">Entrar no Sistema</span>
-        <span *ngIf="carregando">Autenticando... ⚙️</span>
-      </button>
     </div>
   </div>
 </div>

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,33 +11,42 @@ export class AuthService {
   // O endereço do seu Java
   private apiUrl = 'http://localhost:8080/auth';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {}
 
   login(usuario: any) {
     return this.http.post<any>(`${this.apiUrl}/login`, usuario).pipe(
       tap((resposta) => {
         if (resposta.token) {
-          // 👇 CORRIGIDO: Salvando com o nome exato que o Guard e o Interceptor procuram
+          // Salvando todos os dados importantes
           localStorage.setItem('token', resposta.token);
-          console.log('✅ TOKEN SALVO COM SUCESSO!'); 
+          localStorage.setItem('role', resposta.role);
+          localStorage.setItem('empresaId', resposta.empresaId);
+          console.log('✅ TOKEN E DADOS SALVOS COM SUCESSO!');
         } else {
-          console.error(
-            "O Java respondeu, mas não achei o campo 'token'. O que veio foi:",
-            resposta
-          );
+          console.error('Erro: O Java não retornou o token.', resposta);
         }
-      })
+      }),
     );
   }
 
+  // 👇 NOVA FUNÇÃO: Chama a rota de registro do SaaS
+  registrarNovaOficina(dados: any): Observable<any> {
+    // responseType: 'text' porque o Java devolve apenas uma mensagem e não um JSON
+    return this.http.post(`${this.apiUrl}/nova-oficina`, dados, { responseType: 'text' });
+  }
+
   logout() {
-    // 👇 CORRIGIDO: Removendo a chave certa
+    // Limpando tudo na saída
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('empresaId');
     this.router.navigate(['/login']);
   }
 
   getToken() {
-    // 👇 CORRIGIDO: Buscando a chave certa
     return localStorage.getItem('token');
   }
 }

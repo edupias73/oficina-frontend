@@ -1,7 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 
 // Nossos Modelos
 import { OrdemServico, ItemPeca, ItemServico } from '../../models/ordem-servico.model';
@@ -20,12 +19,11 @@ import { ProdutoService } from '../../services/produto.service';
 @Component({
   selector: 'app-ordens-servico',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './ordens-servico.html',
-  styleUrl: './ordens-servico.scss'
+  styleUrl: './ordens-servico.scss',
 })
 export class OrdensServicoComponent implements OnInit {
-  
   // --- VARIÁVEIS DO KANBAN ---
   todasOS: OrdemServico[] = [];
   carregando: boolean = false;
@@ -38,9 +36,9 @@ export class OrdensServicoComponent implements OnInit {
   // --- VARIÁVEIS DO MODAL GIGANTE ---
   exibirModal: boolean = false;
   abaAtual: 'dados' | 'pecas' | 'servicos' = 'dados'; // Controle das abas do modal
-  
+
   // A O.S. que estamos criando ou editando agora
-  osEmEdicao: Partial<OrdemServico> = {}; 
+  osEmEdicao: Partial<OrdemServico> = {};
 
   // --- LISTAS PARA OS DROPDOWNS (SELECTS) ---
   listaClientes: Cliente[] = [];
@@ -59,7 +57,7 @@ export class OrdensServicoComponent implements OnInit {
     private veiculoService: VeiculoService,
     private mecanicoService: MecanicoService,
     private produtoService: ProdutoService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -75,6 +73,7 @@ export class OrdensServicoComponent implements OnInit {
     this.carregando = true;
     this.osService.listar().subscribe({
       next: (dados) => {
+        console.log('📦 PACOTE QUE CHEGOU DO JAVA:', dados);
         this.todasOS = dados;
         this.organizarKanban();
         this.carregando = false;
@@ -84,16 +83,18 @@ export class OrdensServicoComponent implements OnInit {
         console.error('Erro ao carregar o Pátio', err);
         this.carregando = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
   organizarKanban() {
-    this.colunaOrcamento = this.todasOS.filter(os => os.status === 'ORCAMENTO');
-    this.colunaAguardandoAprovacao = this.todasOS.filter(os => os.status === 'AGUARDANDO_APROVACAO');
-    this.colunaEmExecucao = this.todasOS.filter(os => os.status === 'EM_EXECUCAO');
-    this.colunaAguardandoPeca = this.todasOS.filter(os => os.status === 'AGUARDANDO_PECA');
-    this.colunaPronta = this.todasOS.filter(os => os.status === 'PRONTA');
+    this.colunaOrcamento = this.todasOS.filter((os) => os.status === 'ORCAMENTO');
+    this.colunaAguardandoAprovacao = this.todasOS.filter(
+      (os) => os.status === 'AGUARDANDO_APROVACAO',
+    );
+    this.colunaEmExecucao = this.todasOS.filter((os) => os.status === 'EM_EXECUCAO');
+    this.colunaAguardandoPeca = this.todasOS.filter((os) => os.status === 'AGUARDANDO_PECA');
+    this.colunaPronta = this.todasOS.filter((os) => os.status === 'PRONTA');
   }
 
   // ==========================================
@@ -102,10 +103,10 @@ export class OrdensServicoComponent implements OnInit {
 
   // Puxa tudo do banco de dados para os selects da tela
   carregarListasAuxiliares() {
-    this.clienteService.listar().subscribe(dados => this.listaClientes = dados);
-    this.veiculoService.listar().subscribe(dados => this.listaVeiculos = dados);
-    this.mecanicoService.listar().subscribe(dados => this.listaMecanicos = dados);
-    this.produtoService.listar().subscribe(dados => this.listaProdutos = dados);
+    this.clienteService.listar().subscribe((dados) => (this.listaClientes = dados));
+    this.veiculoService.listar().subscribe((dados) => (this.listaVeiculos = dados));
+    this.mecanicoService.listar().subscribe((dados) => (this.listaMecanicos = dados));
+    this.produtoService.listar().subscribe((dados) => (this.listaProdutos = dados));
   }
 
   abrirNovaOS() {
@@ -117,7 +118,7 @@ export class OrdensServicoComponent implements OnInit {
       totalPecas: 0,
       totalServicos: 0,
       totalGeral: 0,
-      desconto: 0
+      desconto: 0,
     };
     this.abaAtual = 'dados';
     this.veiculosDoCliente = [];
@@ -127,11 +128,11 @@ export class OrdensServicoComponent implements OnInit {
   verDetalhes(os: OrdemServico) {
     // Clona a O.S. para o modal (para não alterar a tela antes de salvar)
     this.osEmEdicao = JSON.parse(JSON.stringify(os));
-    
+
     // Se não tiver listas, inicializa para não dar erro
     if (!this.osEmEdicao.pecas) this.osEmEdicao.pecas = [];
     if (!this.osEmEdicao.servicos) this.osEmEdicao.servicos = [];
-    
+
     this.aoSelecionarCliente(); // Filtra os carros do cliente
     this.abaAtual = 'dados';
     this.exibirModal = true;
@@ -148,7 +149,7 @@ export class OrdensServicoComponent implements OnInit {
   // Quando o usuário escolhe um cliente, mostra só os carros dele!
   aoSelecionarCliente() {
     if (this.osEmEdicao.clienteId) {
-      this.veiculosDoCliente = this.listaVeiculos.filter(v => {
+      this.veiculosDoCliente = this.listaVeiculos.filter((v) => {
         // Verifica tanto se o Java mandou o ID direto, ou se mandou dentro do objeto cliente
         const donoId = v.clienteId || (v.cliente && v.cliente.id);
         return donoId === this.osEmEdicao.clienteId;
@@ -164,7 +165,7 @@ export class OrdensServicoComponent implements OnInit {
 
   // Quando escolhe um produto no select, puxa o preço dele automaticamente
   aoSelecionarProdutoNaPeca() {
-    const produtoEscolhido = this.listaProdutos.find(p => p.id === this.novaPeca.produtoId);
+    const produtoEscolhido = this.listaProdutos.find((p) => p.id === this.novaPeca.produtoId);
     if (produtoEscolhido) {
       this.novaPeca.nomeProduto = produtoEscolhido.nome;
       this.novaPeca.valorUnitario = produtoEscolhido.precoVenda || 0;
@@ -176,10 +177,10 @@ export class OrdensServicoComponent implements OnInit {
       alert('Selecione um produto e a quantidade!');
       return;
     }
-    
+
     // Adiciona na lista temporária da O.S.
     this.osEmEdicao.pecas?.push({ ...this.novaPeca });
-    
+
     // Limpa os campos para a próxima peça
     this.novaPeca = { produtoId: 0, quantidade: 1, valorUnitario: 0 };
     this.recalcularTotais();
@@ -195,7 +196,7 @@ export class OrdensServicoComponent implements OnInit {
       alert('Preencha a descrição do serviço e o valor!');
       return;
     }
-    
+
     this.osEmEdicao.servicos?.push({ ...this.novoServico });
     this.novoServico = { descricao: '', valor: 0 };
     this.recalcularTotais();
@@ -208,18 +209,18 @@ export class OrdensServicoComponent implements OnInit {
 
   recalcularTotais() {
     let somaPecas = 0;
-    this.osEmEdicao.pecas?.forEach(p => {
-      somaPecas += (p.quantidade * p.valorUnitario);
+    this.osEmEdicao.pecas?.forEach((p) => {
+      somaPecas += p.quantidade * p.valorUnitario;
     });
 
     let somaServicos = 0;
-    this.osEmEdicao.servicos?.forEach(s => {
+    this.osEmEdicao.servicos?.forEach((s) => {
       somaServicos += Number(s.valor); // Garante que é número
     });
 
     this.osEmEdicao.totalPecas = somaPecas;
     this.osEmEdicao.totalServicos = somaServicos;
-    this.osEmEdicao.totalGeral = (somaPecas + somaServicos) - (this.osEmEdicao.desconto || 0);
+    this.osEmEdicao.totalGeral = somaPecas + somaServicos - (this.osEmEdicao.desconto || 0);
   }
 
   // ==========================================
@@ -239,7 +240,7 @@ export class OrdensServicoComponent implements OnInit {
           this.fecharModal();
           this.carregarQuadro();
         },
-        error: (err) => console.error(err)
+        error: (err) => console.error(err),
       });
     } else {
       this.osService.cadastrar(this.osEmEdicao).subscribe({
@@ -248,7 +249,7 @@ export class OrdensServicoComponent implements OnInit {
           this.fecharModal();
           this.carregarQuadro();
         },
-        error: (err) => console.error(err)
+        error: (err) => console.error(err),
       });
     }
   }

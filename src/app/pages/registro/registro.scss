@@ -1,0 +1,266 @@
+.registro-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  background-color: #f8fafc;
+}
+
+/* LADO ESQUERDO (MARKETING) */
+.registro-marketing {
+  flex: 1;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: white;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 900px) {
+    display: none;
+  } /* Esconde no telemóvel */
+
+  .marketing-content {
+    max-width: 450px;
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 40px;
+      .icon {
+        font-size: 2rem;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #38bdf8;
+      }
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 15px;
+    }
+    .subtitle {
+      font-size: 1.1rem;
+      color: #94a3b8;
+      margin-bottom: 40px;
+      line-height: 1.5;
+    }
+
+    .beneficios {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      .beneficio-item {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+        .check {
+          background: rgba(56, 189, 248, 0.2);
+          color: #38bdf8;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.8rem;
+          flex-shrink: 0;
+          margin-top: 3px;
+        }
+        strong {
+          display: block;
+          font-size: 1.05rem;
+          margin-bottom: 3px;
+        }
+        span {
+          color: #cbd5e1;
+          font-size: 0.9rem;
+          line-height: 1.4;
+        }
+      }
+    }
+  }
+}
+
+/* LADO DIREITO (FORMULÁRIO) */
+.registro-form-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  .registro-box {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 30px;
+      h2 {
+        font-size: 1.8rem;
+        color: #1e293b;
+        margin: 0 0 5px 0;
+      }
+      p {
+        color: #64748b;
+        margin: 0;
+      }
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+
+      .full-width {
+        grid-column: 1 / -1;
+      }
+      .sessao-titulo {
+        font-size: 1.1rem;
+        color: #1e293b;
+        margin: 15px 0 0 0;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .box-destaque {
+        background: #f0fdf4;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #bbf7d0;
+        label {
+          color: #166534;
+        }
+        input {
+          border-color: #86efac;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        small {
+          display: block;
+          color: #15803d;
+          margin-top: 5px;
+          font-size: 0.8rem;
+        }
+      }
+
+      .form-group {
+        label {
+          display: block;
+          margin-bottom: 5px;
+          font-weight: 600;
+          color: #475569;
+          font-size: 0.9rem;
+        }
+        input {
+          width: 100%;
+          padding: 12px;
+          border: 1px solid #cbd5e1;
+          border-radius: 6px;
+          font-size: 1rem;
+          transition: border-color 0.2s;
+          &:focus {
+            outline: none;
+            border-color: #3b82f6;
+          }
+          &:disabled {
+            background-color: #f1f5f9;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      &:hover:not(:disabled) {
+        background: #2563eb;
+      }
+      &:disabled {
+        background: #94a3b8;
+        cursor: not-allowed;
+      }
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.95rem;
+      color: #64748b;
+      a {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 600;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: #ef4444;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      border: 1px solid #fca5a5;
+    }
+
+    /* TELA DE SUCESSO */
+    .sucesso-box {
+      text-align: center;
+      padding: 20px 0;
+      .icone-sucesso {
+        font-size: 4rem;
+        margin-bottom: 10px;
+      }
+      h2 {
+        color: #10b981;
+        margin: 0 0 10px 0;
+      }
+      p {
+        color: #64748b;
+      }
+      .dados-importantes {
+        background: #f1f5f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        h3 {
+          font-size: 2rem;
+          color: #1e293b;
+          margin: 5px 0 0 0;
+          letter-spacing: 2px;
+        }
+      }
+      .redirecionando {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        margin-top: 20px;
+        font-style: italic;
+      }
+    }
+  }
+}
