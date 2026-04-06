@@ -39,15 +39,12 @@
 
   <div class="registro-form-wrapper">
     <div class="registro-box">
+      
       <div *ngIf="sucesso" class="sucesso-box">
         <div class="icone-sucesso">✅</div>
         <h2>Oficina Registada!</h2>
-        <p>A sua estrutura foi criada com sucesso.</p>
-        <div class="dados-importantes">
-          <small>Guarda este código para fazer Login:</small>
-          <h3>{{ dadosRegistro.codigoEmpresa }}</h3>
-        </div>
-        <p class="redirecionando">A redirecionar para o Login...</p>
+        <p>A sua estrutura foi criada com sucesso e já está pronta a usar.</p>
+        <p class="redirecionando" style="margin-top: 20px;">A redirecionar para o Login...</p>
       </div>
 
       <div *ngIf="!sucesso">
@@ -63,16 +60,19 @@
             <label>Nome da Oficina *</label>
             <input
               type="text"
+              name="nomeFantasia"
               [(ngModel)]="dadosRegistro.nomeFantasia"
               (blur)="gerarCodigoAutomatico()"
               placeholder="Ex: Turbo auto service"
               [disabled]="carregando"
+              required
             />
           </div>
           <div class="form-group">
             <label>CNPJ</label>
             <input
               type="text"
+              name="cnpj"
               [(ngModel)]="dadosRegistro.cnpj"
               placeholder="00.000.000/0001-00"
               [disabled]="carregando"
@@ -82,46 +82,48 @@
             <label>WhatsApp / Telefone</label>
             <input
               type="text"
+              name="telefone"
               [(ngModel)]="dadosRegistro.telefone"
               placeholder="(00) 00000-0000"
               [disabled]="carregando"
             />
           </div>
 
-          <div class="form-group full-width box-destaque">
-            <label>Código de Acesso da Oficina (Opcional)</label>
-            <input
-              type="text"
-              [(ngModel)]="dadosRegistro.codigoEmpresa"
-              placeholder="Gerado automaticamente se vazio"
-              [disabled]="carregando"
-            />
-            <small>Os seus mecânicos usarão este código para entrar no sistema.</small>
-          </div>
-
-          <h4 class="sessao-titulo full-width">Dados do Administrador</h4>
+          <h4 class="sessao-titulo full-width" style="margin-top: 10px;">Dados do Administrador</h4>
+          
           <div class="form-group full-width">
             <label>E-mail (Login) *</label>
             <input
               type="email"
+              name="login"
               [(ngModel)]="dadosRegistro.login"
+              pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
               placeholder="teu@email.com"
+              #emailReg="ngModel"
               [disabled]="carregando"
+              required
             />
+            <small class="erro-texto" *ngIf="emailReg.invalid && emailReg.touched" style="color: red; font-size: 12px; margin-top: 4px; display: block;">
+              Formato de e-mail inválido.
+            </small>
           </div>
+          
           <div class="form-group full-width">
             <label>Senha *</label>
             <input
               type="password"
+              name="senha"
               [(ngModel)]="dadosRegistro.senha"
               placeholder="Cria uma senha forte"
               [disabled]="carregando"
+              required
             />
           </div>
         </div>
 
-        <button class="btn-primary" (click)="registrar()" [disabled]="carregando">
-          {{ carregando ? 'A preparar oficina...' : 'Criar Conta e Começar' }}
+      <button class="btn-primary" (click)="registrar()" [disabled]="carregando || emailReg.invalid" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <span *ngIf="carregando" class="spinner"></span>
+          {{ carregando ? 'A construir a sua oficina...' : 'Criar Conta e Começar' }}
         </button>
 
         <p class="login-link">

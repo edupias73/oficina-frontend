@@ -13,7 +13,6 @@ import { AuthService } from '../../services/auth.service';
 })
 export class Login {
   loginData = {
-    codigoEmpresa: '',
     login: '',
     senha: '',
   };
@@ -28,14 +27,8 @@ export class Login {
   ) {}
 
   entrar() {
-    if (!this.loginData.codigoEmpresa || !this.loginData.login || !this.loginData.senha) {
-      this.erroLogin = 'Preencha todos os campos para acessar.';
-      return;
-    }
-
-    this.carregando = true;
-    this.erroLogin = '';
-
+  
+  
     // 👇 Chamando o serviço do jeito certo
     this.authService.login(this.loginData).subscribe({
       next: () => {

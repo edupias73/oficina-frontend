@@ -13,29 +13,22 @@
       <div class="alert-error" *ngIf="erroLogin">{{ erroLogin }}</div>
 
       <form (ngSubmit)="entrar()">
-        <div class="input-group">
-          <label>Código da Oficina</label>
-          <input
-            type="text"
-            name="codigo"
-            [(ngModel)]="loginData.codigoEmpresa"
-            placeholder="Ex: OFC-001"
-            autocomplete="off"
-            style="text-transform: uppercase"
-            required
-          />
-        </div>
-
+        
         <div class="input-group">
           <label>Usuário (E-mail)</label>
           <input
             type="email"
             name="login"
             [(ngModel)]="loginData.login"
+            pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
             placeholder="seu@email.com"
             autocomplete="username"
+            #emailInput="ngModel"
             required
           />
+          <small class="erro-texto" *ngIf="emailInput.invalid && emailInput.touched" style="color: red; font-size: 12px; margin-top: 4px; display: block;">
+            Por favor, digite um e-mail válido.
+          </small>
         </div>
 
         <div class="input-group">
@@ -50,8 +43,9 @@
           />
         </div>
 
-        <button type="submit" class="btn-entrar" [disabled]="carregando">
-          {{ carregando ? 'A entrar...' : 'Entrar' }}
+        <button type="submit" class="btn-entrar" [disabled]="carregando || emailInput.invalid" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <span *ngIf="carregando" class="spinner"></span>
+          {{ carregando ? 'A validar dados...' : 'Entrar' }}
         </button>
       </form>
 

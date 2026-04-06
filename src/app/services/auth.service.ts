@@ -24,6 +24,7 @@ export class AuthService {
           localStorage.setItem('token', resposta.token);
           localStorage.setItem('role', resposta.role);
           localStorage.setItem('empresaId', resposta.empresaId);
+          localStorage.setItem('nomeOficina', resposta.nomeOficina);
           console.log('✅ TOKEN E DADOS SALVOS COM SUCESSO!');
         } else {
           console.error('Erro: O Java não retornou o token.', resposta);
