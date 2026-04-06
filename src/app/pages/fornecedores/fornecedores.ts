@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './fornecedores.html',
-  styleUrl: './fornecedores.scss'
+  styleUrl: './fornecedores.scss',
 })
 export class FornecedoresComponent implements OnInit {
   listaFornecedores: any[] = [];
@@ -27,10 +27,13 @@ export class FornecedoresComponent implements OnInit {
     cnpj: '',
     telefone: '',
     email: '',
-    endereco: ''
+    endereco: '',
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit() {
     this.carregarFornecedores();
@@ -42,8 +45,10 @@ export class FornecedoresComponent implements OnInit {
       next: (dados) => {
         this.listaFornecedores = dados;
         this.listaCompleta = dados;
+
+        this.cdr.detectChanges();
       },
-      error: (err) => console.error('Erro ao carregar fornecedores', err)
+      error: (err) => console.error('Erro ao carregar fornecedores', err),
     });
   }
 
@@ -53,16 +58,23 @@ export class FornecedoresComponent implements OnInit {
       return;
     }
     const termo = this.termoBusca.toLowerCase();
-    this.listaFornecedores = this.listaCompleta.filter(f => 
-      f.nomeFantasia.toLowerCase().includes(termo) || 
-      (f.cnpj && f.cnpj.includes(termo))
+    this.listaFornecedores = this.listaCompleta.filter(
+      (f) => f.nomeFantasia.toLowerCase().includes(termo) || (f.cnpj && f.cnpj.includes(termo)),
     );
   }
 
   // --- ABRIR / FECHAR MODAL ---
   abrirModalCadastro() {
     this.modoEdicao = false;
-    this.fornecedorAtual = { id: null, nomeFantasia: '', razaoSocial: '', cnpj: '', telefone: '', email: '', endereco: '' };
+    this.fornecedorAtual = {
+      id: null,
+      nomeFantasia: '',
+      razaoSocial: '',
+      cnpj: '',
+      telefone: '',
+      email: '',
+      endereco: '',
+    };
     this.modalAberto = true;
   }
 
@@ -91,7 +103,7 @@ export class FornecedoresComponent implements OnInit {
           this.fecharModal();
           this.carregarFornecedores();
         },
-        error: () => alert('Erro ao atualizar fornecedor.')
+        error: () => alert('Erro ao atualizar fornecedor.'),
       });
     } else {
       // NOVO CADASTRO
@@ -101,19 +113,23 @@ export class FornecedoresComponent implements OnInit {
           this.fecharModal();
           this.carregarFornecedores();
         },
-        error: () => alert('Erro ao cadastrar fornecedor.')
+        error: () => alert('Erro ao cadastrar fornecedor.'),
       });
     }
   }
 
   // --- EXCLUIR LOGICAMENTE ---
   excluirFornecedor(id: number) {
-    if (confirm('Tem a certeza que deseja excluir este fornecedor? Ele vai sumir da lista, mas as compras antigas continuarão salvas.')) {
+    if (
+      confirm(
+        'Tem a certeza que deseja excluir este fornecedor? Ele vai sumir da lista, mas as compras antigas continuarão salvas.',
+      )
+    ) {
       this.http.delete(`http://localhost:8080/fornecedores/${id}`).subscribe({
         next: () => {
           this.carregarFornecedores();
         },
-        error: () => alert('Erro ao excluir fornecedor.')
+        error: () => alert('Erro ao excluir fornecedor.'),
       });
     }
   }
