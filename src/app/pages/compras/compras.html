@@ -53,34 +53,49 @@
     </div>
     <div class="modal-body">
       
-      <div class="sessao-cinza">
-        <div class="form-grid-3">
-          <div class="form-group">
-            <label>Fornecedor *</label>
-            <select [(ngModel)]="novaCompra.fornecedorId">
-              <option [ngValue]="null">Selecione...</option>
-              <option *ngFor="let f of listaFornecedores" [value]="f.id">{{ f.nomeFantasia }}</option>
-            </select>
-          </div>
-          <div class="form-group"><label>Nº da Nota</label><input type="text" [(ngModel)]="novaCompra.numeroNota"></div>
-          <div class="form-group"><label>Data Compra</label><input type="date" [(ngModel)]="novaCompra.dataCompra"></div>
-        </div>
-      </div>
+    <div class="sessao-cinza">
+  <div class="form-grid-3">
+    <div class="form-group">
+      <label>Fornecedor *</label>
+      <select [(ngModel)]="novaCompra.fornecedorId" [disabled]="novaCompra.status === 'EFETIVADA'">
+        <option [ngValue]="null">Selecione...</option>
+        <option *ngFor="let f of listaFornecedores" [value]="f.id">{{ f.nomeFantasia }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Nº da Nota</label>
+      <input type="text" [(ngModel)]="novaCompra.numeroNota" [disabled]="novaCompra.status === 'EFETIVADA'">
+    </div>
+    <div class="form-group">
+      <label>Data Compra</label>
+      <input type="date" [(ngModel)]="novaCompra.dataCompra" [disabled]="novaCompra.status === 'EFETIVADA'">
+    </div>
+  </div>
+</div>
 
-      <h4 class="titulo-sessao">Itens da Nota</h4>
-      <div class="form-grid-4 align-bottom">
-        <div class="form-group" style="grid-column: span 1;">
-          <label>Pesquisar Produto</label>
-          <div class="input-group-lupa">
-            <input type="text" readonly placeholder="Clique na lupa ➔" [value]="itemAtual.nomeProduto" (click)="abrirModalBuscaProduto()" style="cursor: pointer;">
-            <button class="btn-lupa" (click)="abrirModalBuscaProduto()">🔍</button>
-          </div>
-        </div>
-        <div class="form-group"><label>Quantidade</label><input type="number" [(ngModel)]="itemAtual.quantidade" min="1"></div>
-        <div class="form-group"><label>Custo Unit. (R$)</label><input type="number" [(ngModel)]="itemAtual.precoUnitario" step="0.01"></div>
-        <div class="form-group"><button class="btn-success" (click)="abrirModalMarkup()">Formar Preço e Incluir</button></div>
+<div *ngIf="novaCompra.status !== 'EFETIVADA'">
+  <h4 class="titulo-sessao">Itens da Nota</h4>
+  <div class="form-grid-4 align-bottom">
+    <div class="form-group">
+      <label>Pesquisar Produto</label>
+      <div class="input-group-lupa">
+        <input type="text" readonly placeholder="Clique na lupa ➔" [value]="itemAtual.nomeProduto" (click)="abrirModalBuscaProduto()">
+        <button class="btn-lupa" (click)="abrirModalBuscaProduto()">🔍</button>
       </div>
-
+    </div>
+    <div class="form-group">
+      <label>Quantidade</label>
+      <input type="number" [(ngModel)]="itemAtual.quantidade" min="1">
+    </div>
+    <div class="form-group">
+      <label>Custo Unit. (R$)</label>
+      <input type="number" [(ngModel)]="itemAtual.precoUnitario" step="0.01">
+    </div>
+    <div class="form-group">
+      <button class="btn-success" (click)="abrirModalMarkup()">Formar Preço e Incluir</button>
+    </div>
+  </div>
+</div>  
       <div class="table-card mb-20">
         <table>
           <thead><tr><th>Produto</th><th>Qtd</th><th>Custo Unit.</th><th>Subtotal</th><th></th></tr></thead>

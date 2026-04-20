@@ -81,14 +81,35 @@ export class ComprasComponent implements OnInit {
     this.modalAberto = true;
   }
 
-  abrirModalEdicao(compra: any) {
-    if (compra.status !== 'RASCUNHO') return; 
-    this.novaCompra = {
-      id: compra.id, fornecedorId: compra.fornecedor?.id, dataCompra: compra.dataCompra, numeroNota: compra.numeroNota, frete: compra.frete || 0, impostos: compra.impostos || 0, desconto: compra.desconto || 0, ratearCustos: compra.ratearCustos,
-      itens: compra.itens ? compra.itens.map((i: any) => ({ produtoId: i.produto?.id, nomeProduto: i.produto?.nome, codigoFabricante: i.produto?.codigoFabricante, quantidade: i.quantidade, precoUnitario: i.precoUnitario, subtotal: i.subtotal })) : []
-    };
-    this.resetarItemAtual();
-    this.modalAberto = true;
+  abrirModalEdicao(resumo: any) {
+    this.http.get<any>(`http://localhost:8080/compras/${resumo.id}`).subscribe({
+      next: (compra) => {
+        this.novaCompra = {
+          id: compra.id,
+          fornecedorId: compra.fornecedorId, // 👈 Agora bate com o DTO
+          dataCompra: compra.dataCompra,
+          numeroNota: compra.numeroNota,
+          frete: compra.frete || 0,
+          impostos: compra.impostos || 0,
+          desconto: compra.desconto || 0,
+          ratearCustos: compra.ratearCustos,
+          status: compra.status,
+          // Mapeia os itens garantindo que as chaves batam com o que o itemAtual usa
+          itens: compra.itens.map((i: any) => ({
+            produtoId: i.produtoId,
+            nomeProduto: i.nomeProduto,
+            codigoFabricante: i.codigoFabricante,
+            quantidade: i.quantidade,
+            precoUnitario: i.precoUnitario,
+            precoVenda: i.precoVenda,
+            precoMaiorista: i.precoMaiorista,
+            subtotal: i.subtotal
+          }))
+        };
+        this.modalAberto = true;
+        this.cd.detectChanges();
+      }
+    });
   }
 
   fecharModal() {
