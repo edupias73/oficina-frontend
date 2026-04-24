@@ -16,7 +16,6 @@
   </div>
 
   <div class="kanban-board" *ngIf="!carregando">
-    
     <div class="kanban-column">
       <div class="column-header orcamento">
         <h3>📋 Orçamento</h3>
@@ -66,46 +65,37 @@
         <ng-container *ngTemplateOutlet="cartaoOS; context: { lista: colunaPronta }"></ng-container>
       </div>
     </div>
-
   </div>
 </div>
 
 <ng-template #cartaoOS let-lista="lista">
   <div class="os-card" *ngFor="let os of lista" (click)="verDetalhes(os)">
-    
     <div class="card-header">
       <span class="os-id">#{{ os.id }}</span>
       <span class="os-date">{{ os.dataAbertura | date:'dd/MM' }}</span>
     </div>
-    
     <div class="card-body">
       <h4 class="car-title">{{ os.veiculo?.modelo }} <span class="badge-placa">{{ os.veiculo?.placa }}</span></h4>
       <p class="client-name">👤 {{ os.cliente?.nome }}</p>
-      
       <div class="defeito-box">
         <p>"{{ os.defeitoRelatado || 'Defeito não informado...' }}"</p>
       </div>
     </div>
-    
     <div class="card-footer">
       <div class="mecanico-info">
         <span *ngIf="os.mecanico">👨‍🔧 {{ os.mecanico.nome }}</span>
         <span *ngIf="!os.mecanico" class="sem-mecanico">Sem mecânico</span>
       </div>
-      
       <div class="actions-right">
         <span class="os-value">R$ {{ os.totalGeral || 0 }}</span>
-        <button class="btn-whatsapp" (click)="enviarWhatsApp(os, $event)" title="Enviar Zap pro Cliente">
-          💬
-        </button>
+        <button class="btn-whatsapp" (click)="enviarWhatsApp(os, $event)">💬</button>
       </div>
     </div>
-
   </div>
 </ng-template>
+
 <div class="modal-overlay" *ngIf="exibirModal">
   <div class="modal-papel modal-os">
-    
     <div class="modal-header">
       <h2>{{ osEmEdicao.id ? 'Editar O.S. #' + osEmEdicao.id : 'Nova Ordem de Serviço' }}</h2>
       <button class="btn-fechar" (click)="fecharModal()">✖</button>
@@ -118,14 +108,18 @@
     </div>
 
     <div class="modal-body">
-      <div class="aba-content" *ngIf="abaAtual === 'dados'">
+    <div class="aba-content" *ngIf="abaAtual === 'dados'">
         <div class="form-grid">
+          
           <div class="grupo-form">
             <label>Cliente *</label>
-            <select class="input-padrao" [(ngModel)]="osEmEdicao.clienteId" (change)="aoSelecionarCliente()">
-              <option [ngValue]="null" disabled selected>Selecione o dono...</option>
-              <option *ngFor="let c of listaClientes" [ngValue]="c.id">{{ c.nome }}</option>
-            </select>
+            <div style="display: flex; gap: 10px;">
+              <select class="input-padrao" [(ngModel)]="osEmEdicao.clienteId" (change)="aoSelecionarCliente()" style="flex-grow: 1;">
+                <option [ngValue]="null" disabled selected>Selecione o dono...</option>
+                <option *ngFor="let c of listaClientes" [ngValue]="c.id">{{ c.nome }}</option>
+              </select>
+              <button class="btn-success" style="padding: 0 15px; border-radius: 8px; border: none; cursor: pointer; background: #10b981; color: white;" (click)="abrirModalClienteRapido()">+ Novo</button>
+            </div>
           </div>
 
           <div class="grupo-form">
@@ -137,121 +131,113 @@
           </div>
 
           <div class="grupo-form">
-            <label>Mecânico Responsável</label>
+            <label>Mecânico</label>
             <select class="input-padrao" [(ngModel)]="osEmEdicao.mecanicoId">
-              <option [ngValue]="null">Ainda não definido...</option>
+              <option [ngValue]="null">Não definido...</option>
               <option *ngFor="let m of listaMecanicos" [ngValue]="m.id">{{ m.nome }}</option>
             </select>
           </div>
 
           <div class="grupo-form">
-            <label>Previsão de Entrega</label>
+            <label>Previsão</label>
             <input type="date" class="input-padrao" [(ngModel)]="osEmEdicao.previsaoEntrega">
           </div>
           
           <div class="grupo-form">
-            <label>Quilometragem</label>
-            <input type="number" class="input-padrao" [(ngModel)]="osEmEdicao.quilometragem" placeholder="Ex: 85000">
+            <label>Km Atual</label>
+            <input type="number" class="input-padrao" [(ngModel)]="osEmEdicao.quilometragem">
           </div>
 
-          <div class="grupo-form">
+            <div class="grupo-form">
             <label>Status Atual</label>
             <select class="input-padrao" [(ngModel)]="osEmEdicao.status">
               <option value="ORCAMENTO">📋 Orçamento</option>
               <option value="AGUARDANDO_APROVACAO">⏳ Aguardando Aprovação</option>
               <option value="EM_EXECUCAO">🔧 Em Execução</option>
               <option value="AGUARDANDO_PECA">📦 Aguardando Peça</option>
-              <option value="PRONTA">🟢 Pronta para Entrega</option>
+              <option value="PRONTA">🟢 Pronta</option>
             </select>
           </div>
 
           <div class="grupo-form full-width">
-            <label>Defeito Relatado pelo Cliente</label>
-            <textarea class="input-padrao" [(ngModel)]="osEmEdicao.defeitoRelatado" rows="3" placeholder="Ex: O carro faz um barulho estranho ao virar a direção para a direita..."></textarea>
+            <label>Defeito Relatado</label>
+            <textarea class="input-padrao" [(ngModel)]="osEmEdicao.defeitoRelatado" rows="2" placeholder="O que o cliente relatou..."></textarea>
           </div>
+
         </div>
       </div>
 
       <div class="aba-content" *ngIf="abaAtual === 'pecas'">
         <div class="add-item-bar">
-          <div class="grupo-form flex-grow">
-            <select class="input-padrao" [(ngModel)]="novaPeca.produtoId" (change)="aoSelecionarProdutoNaPeca()">
-              <option [ngValue]="0" disabled selected>Selecione uma peça do estoque...</option>
-              <option *ngFor="let p of listaProdutos" [ngValue]="p.id">{{ p.nome }} (Estoque: {{ p.quantidadeEstoque }}) - R$ {{ p.precoVenda }}</option>
-            </select>
+          <div class="grupo-form flex-grow" style="position: relative;">
+            <input type="text" class="input-padrao" [(ngModel)]="termoBuscaPeca" (input)="filtrarPecasOS()" placeholder="🔍 Pesquise a peça...">
+            <div class="dropdown-busca" *ngIf="mostrarResultadosBusca && produtosFiltradosBusca.length > 0">
+              <div class="dropdown-item" *ngFor="let p of produtosFiltradosBusca" (click)="selecionarPecaBusca(p)">
+                <strong>{{ p.nome }}</strong> <small>({{ p.codigoFabricante || 'S/N' }})</small>
+                <div class="preco-estoque">
+                  <span [ngClass]="(p.quantidadeEstoque || 0) > 0 ? 'text-success' : 'text-danger'">Qtd: {{ p.quantidadeEstoque || 0 }}</span>
+                  <span style="color: #0284c7; font-weight: bold;">R$ {{ p.precoVenda }}</span>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="grupo-form qtd-box">
-            <input type="number" class="input-padrao" [(ngModel)]="novaPeca.quantidade" placeholder="Qtd" min="1">
+            <input type="number" class="input-padrao" [(ngModel)]="novaPeca.quantidade" min="1">
           </div>
-          <button class="btn-primary" (click)="adicionarPecaLista()">+ Adicionar</button>
+          <button class="btn-primary" (click)="adicionarPecaLista()">+ Add</button>
         </div>
 
         <div class="tabela-itens">
-          <table *ngIf="osEmEdicao.pecas && osEmEdicao.pecas.length > 0">
-            <thead>
-              <tr>
-                <th>Peça</th>
-                <th>Qtd</th>
-                <th>Unitário</th>
-                <th>Subtotal</th>
-                <th></th>
-              </tr>
-            </thead>
+          <table>
+            <thead><tr><th>Peça</th><th>Qtd</th><th>Unit.</th><th>Subtotal</th><th></th></tr></thead>
             <tbody>
               <tr *ngFor="let p of osEmEdicao.pecas; let i = index">
                 <td>{{ p.nomeProduto }}</td>
                 <td>{{ p.quantidade }}</td>
-                <td>R$ {{ p.valorUnitario }}</td>
-                <td>R$ {{ p.quantidade * p.valorUnitario }}</td>
-                <td class="actions-cell"><button class="btn-icon delete" title="Remover" (click)="removerPecaLista(i)">🗑️</button></td>
+                <td>{{ p.valorUnitario | currency:'BRL' }}</td>
+                <td>{{ (p.quantidade * p.valorUnitario) | currency:'BRL' }}</td>
+                <td class="actions-cell"><button class="btn-icon delete" (click)="removerPecaLista(i)">🗑️</button></td>
               </tr>
             </tbody>
           </table>
-          <div class="empty-items" *ngIf="!osEmEdicao.pecas || osEmEdicao.pecas.length === 0">
-            Nenhuma peça adicionada a este orçamento.
-          </div>
         </div>
       </div>
 
       <div class="aba-content" *ngIf="abaAtual === 'servicos'">
         <div class="add-item-bar">
           <div class="grupo-form flex-grow">
-            <input type="text" class="input-padrao" [(ngModel)]="novoServico.descricao" placeholder="Descrição da mão de obra (Ex: Troca de Óleo e Filtros)">
+            <input type="text" class="input-padrao" [(ngModel)]="novoServico.descricao" list="catalogo-servicos" placeholder="Serviço (Ex: Troca de Óleo)">
+            <datalist id="catalogo-servicos">
+              <option value="Troca de Óleo e Filtros"></option>
+              <option value="Alinhamento e Balanceamento"></option>
+              <option value="Troca de Pastilhas"></option>
+              <option value="Limpeza de Bicos"></option>
+              <option value="Revisão Preventiva"></option>
+            </datalist>
           </div>
           <div class="grupo-form val-box">
-            <input type="number" class="input-padrao" [(ngModel)]="novoServico.valor" placeholder="R$ Valor">
+            <input type="number" class="input-padrao" [(ngModel)]="novoServico.valor" placeholder="R$">
           </div>
-          <button class="btn-primary" (click)="adicionarServicoLista()">+ Adicionar</button>
+          <button class="btn-primary" (click)="adicionarServicoLista()">+ Add</button>
         </div>
-
         <div class="tabela-itens">
-          <table *ngIf="osEmEdicao.servicos && osEmEdicao.servicos.length > 0">
-            <thead>
-              <tr>
-                <th>Serviço (Mão de Obra)</th>
-                <th>Valor</th>
-                <th></th>
-              </tr>
-            </thead>
+          <table>
+            <thead><tr><th>Serviço</th><th>Valor</th><th></th></tr></thead>
             <tbody>
               <tr *ngFor="let s of osEmEdicao.servicos; let i = index">
                 <td>{{ s.descricao }}</td>
-                <td>R$ {{ s.valor }}</td>
-                <td class="actions-cell"><button class="btn-icon delete" title="Remover" (click)="removerServicoLista(i)">🗑️</button></td>
+                <td>{{ s.valor | currency:'BRL' }}</td>
+                <td class="actions-cell"><button class="btn-icon delete" (click)="removerServicoLista(i)">🗑️</button></td>
               </tr>
             </tbody>
           </table>
-          <div class="empty-items" *ngIf="!osEmEdicao.servicos || osEmEdicao.servicos.length === 0">
-            Nenhum serviço de mão de obra adicionado.
-          </div>
         </div>
       </div>
     </div>
 
     <div class="modal-footer-os">
       <div class="totais-box">
-        <div class="total-item"><span>Peças:</span> R$ {{ osEmEdicao.totalPecas || 0 }}</div>
-        <div class="total-item"><span>Serviços:</span> R$ {{ osEmEdicao.totalServicos || 0 }}</div>
+        <div class="total-item"><span>Total Peças:</span> R$ {{ osEmEdicao.totalPecas || 0 }}</div>
         <div class="total-item grand-total"><span>Total Geral:</span> R$ {{ osEmEdicao.totalGeral || 0 }}</div>
       </div>
       <div class="actions-box">
@@ -259,6 +245,29 @@
         <button class="btn-salvar" (click)="salvarOS()">💾 Salvar O.S.</button>
       </div>
     </div>
+  </div>
+</div>
 
+<div class="modal-overlay" *ngIf="exibirModalClienteRapido" style="z-index: 2000;">
+  <div class="modal-papel" style="max-width: 400px; padding: 25px; border-radius: 12px;">
+    <h3 style="margin-top: 0; color: #1e293b;">👤 Cadastro de Cliente Rápido</h3>
+    <div class="grupo-form" style="margin-top: 15px;">
+      <label>Nome Completo *</label>
+      <input type="text" class="input-padrao" [(ngModel)]="novoClienteRapido.nome">
+    </div>
+    <div class="grupo-form" style="margin-top: 15px;">
+      <label>WhatsApp</label>
+      <input type="text" class="input-padrao" [(ngModel)]="novoClienteRapido.telefone">
+    </div>
+    <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
+      <button class="btn-cancelar" (click)="exibirModalClienteRapido = false" style="padding: 10px 15px; border: none; background: #f1f5f9; border-radius: 8px; cursor: pointer;">Cancelar</button>
+       <button class="btn-salvar" 
+              (click)="salvarClienteRapido()" 
+              [disabled]="salvandoClienteRapido"
+              [ngStyle]="{'opacity': salvandoClienteRapido ? '0.6' : '1', 'cursor': salvandoClienteRapido ? 'not-allowed' : 'pointer'}"
+              style="padding: 10px 20px; border: none; background: #10b981; color: white; border-radius: 8px; font-weight: bold;">
+        {{ salvandoClienteRapido ? '⏳ Salvando...' : 'Salvar e Selecionar' }}
+      </button>
+    </div>
   </div>
 </div>

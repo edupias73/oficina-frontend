@@ -1,0 +1,61 @@
+<div class="compras-container">
+ <div class="header-actions">
+    <h2> Controle de Estoque (Vitrine)</h2>
+    
+    <div class="input-group-lupa" style="width: 450px; position: relative;">
+      <input type="text" 
+             [(ngModel)]="termoBusca" 
+             (input)="filtrar()" 
+             placeholder="Busca master: 'Filtro Gol', 'Pastilha'..." 
+             style="width: 100%; padding: 12px 35px 12px 40px; border-radius: 8px; border: 2px solid #cbd5e1; outline: none; font-size: 1rem;">
+             
+      <button *ngIf="termoBusca" (click)="limparBusca()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #94a3b8;">
+        ✖
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="carregando" class="text-center py-4 text-muted">
+    <h3>⏳ Carregando as prateleiras...</h3>
+  </div>
+
+  <div class="table-card mt-15">
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Produto</th>
+          <th class="text-center">Qtd Atual</th>
+          <th class="text-right">Preço de Custo</th>
+          <th class="text-right" title="Venda Varejo">Preço Balcão (V)</th>
+          <th class="text-center">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of produtosFiltrados" [ngClass]="{'linha-alerta': p.quantidadeEstoque <= 3}">
+          <td class="text-muted">{{ p.codigoFabricante || 'S/N' }}</td>
+          <td class="fw-bold">{{ p.nome }}</td>
+          
+          <td class="text-center">
+            <span class="qtd-badge" [ngClass]="p.quantidadeEstoque > 3 ? 'qtd-ok' : 'qtd-baixa'">
+              {{ p.quantidadeEstoque || 0 }}
+            </span>
+          </td>
+          
+          <td class="text-right text-muted">{{ (p.precoCusto || 0) | currency:'BRL' }}</td>
+          <td class="text-right destaque-venda">{{ (p.precoVenda || 0) | currency:'BRL' }}</td>
+          
+          <td class="text-center">
+            <span class="badge" [ngClass]="p.quantidadeEstoque > 3 ? 'badge-efetivada' : 'badge-rascunho'" style="font-size: 0.75rem;">
+              {{ p.quantidadeEstoque > 3 ? 'Estoque OK' : 'Abaixo do Limite' }}
+            </span>
+          </td>
+        </tr>
+        
+        <tr *ngIf="produtosFiltrados.length === 0">
+          <td colspan="6" class="text-center py-4 text-muted">Nenhuma peça encontrada no estoque.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

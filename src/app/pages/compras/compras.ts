@@ -3,17 +3,20 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
+
 @Component({
   selector: 'app-compras',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './compras.html',
   styleUrl: './compras.scss'
+  
 })
 export class ComprasComponent implements OnInit {
   listaCompras: any[] = [];
   listaFornecedores: any[] = [];
   listaProdutos: any[] = [];
+ 
 
   modalAberto = false;
 
@@ -81,12 +84,24 @@ export class ComprasComponent implements OnInit {
     this.modalAberto = true;
   }
 
-  abrirModalEdicao(resumo: any) {
+ carregandoDetalhesId: number | null = null;
+
+abrirModalEdicao(resumo: any, event?: Event) {
+    // 1. Bloqueia o clique duplo (se clicar no botão em vez da linha)
+    if (event) event.stopPropagation();
+
+    // Já está abrindo algo? Ignora o clique ansioso do usuário
+    if (this.carregandoDetalhesId === resumo.id) return;
+
+    // 2. Acende a luz de carregando e FORÇA o Angular a mostrar na tela na hora!
+    this.carregandoDetalhesId = resumo.id;
+    this.cd.detectChanges();
+
     this.http.get<any>(`http://localhost:8080/compras/${resumo.id}`).subscribe({
       next: (compra) => {
         this.novaCompra = {
           id: compra.id,
-          fornecedorId: compra.fornecedorId, // 👈 Agora bate com o DTO
+          fornecedorId: compra.fornecedorId,
           dataCompra: compra.dataCompra,
           numeroNota: compra.numeroNota,
           frete: compra.frete || 0,
@@ -94,8 +109,9 @@ export class ComprasComponent implements OnInit {
           desconto: compra.desconto || 0,
           ratearCustos: compra.ratearCustos,
           status: compra.status,
-          // Mapeia os itens garantindo que as chaves batam com o que o itemAtual usa
-          itens: compra.itens.map((i: any) => ({
+          
+          // 👇 3. A TRAVA ANTI-BUG: Se a compra não tiver itens (nula), cria uma lista vazia sem travar o sistema!
+          itens: compra.itens ? compra.itens.map((i: any) => ({
             produtoId: i.produtoId,
             nomeProduto: i.nomeProduto,
             codigoFabricante: i.codigoFabricante,
@@ -104,16 +120,32 @@ export class ComprasComponent implements OnInit {
             precoVenda: i.precoVenda,
             precoMaiorista: i.precoMaiorista,
             subtotal: i.subtotal
-          }))
+          })) : []
         };
+
+        // 4. Apaga a luz de carregando e abre o modal
+        this.carregandoDetalhesId = null;
         this.modalAberto = true;
         this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+        // 5. Se der erro na internet, não deixa a tela travada carregando
+        this.carregandoDetalhesId = null;
+        this.cd.detectChanges();
+        alert('Erro ao carregar detalhes. Esta nota pode estar corrompida.');
       }
     });
   }
 
-  fecharModal() {
-    // 🔥 AUTO-SAVE: Salva silenciosamente se fechar sem querer
+fecharModal() {
+    // 1. A TRAVA MÁGICA: Se já foi efetivada, NÃO salva nada, só fecha a tela e pronto!
+    if (this.novaCompra.status === 'EFETIVADA') {
+      this.modalAberto = false;
+      return;
+    }
+
+    // 2. O Auto-Save continua funcionando apenas para Rascunhos
     if (this.novaCompra.fornecedorId && this.novaCompra.itens.length > 0) {
       this.salvarRascunho(true);
     } else {
@@ -121,12 +153,11 @@ export class ComprasComponent implements OnInit {
     }
   }
 
-  salvarRascunho(silencioso: boolean = false) {
+ salvarRascunho(silencioso: boolean = false) {
     if (!this.novaCompra.fornecedorId || this.novaCompra.itens.length === 0) {
       if (!silencioso) alert('Selecione um fornecedor e adicione pelo menos uma peça!'); return;
     }
 
-    // O Angular vai enviar os preços novos, mas precisaremos ajustar o Java futuramente para ele guardar isso no banco
     const dadosParaOJava = {
       ...this.novaCompra,
       itens: this.novaCompra.itens.map((i: any) => ({ 
@@ -136,11 +167,19 @@ export class ComprasComponent implements OnInit {
 
     if (this.novaCompra.id) {
       this.http.put(`http://localhost:8080/compras/${this.novaCompra.id}`, dadosParaOJava).subscribe({
-        next: () => { if (!silencioso) alert('📝 Atualizado!'); this.modalAberto = false; this.carregarCompras(); }
+        next: () => { if (!silencioso) alert('📝 Atualizado!'); this.modalAberto = false; this.carregarCompras(); },
+        error: (err) => { 
+          console.error(err); 
+          this.modalAberto = false; // 👈 GATILHO DE SEGURANÇA: Fecha a tela mesmo se der erro na rede!
+        }
       });
     } else {
       this.http.post('http://localhost:8080/compras', dadosParaOJava).subscribe({
-        next: () => { if (!silencioso) alert('📝 Salvo!'); this.modalAberto = false; this.carregarCompras(); }
+        next: () => { if (!silencioso) alert('📝 Salvo!'); this.modalAberto = false; this.carregarCompras(); },
+        error: (err) => { 
+          console.error(err); 
+          this.modalAberto = false; // 👈 GATILHO DE SEGURANÇA
+        }
       });
     }
   }

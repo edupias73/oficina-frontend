@@ -36,7 +36,13 @@
               <button class="btn-danger-sm" (click)="excluirCompra(compra.id, $event)" title="Apagar Rascunho">🗑️</button>
             </ng-container>
             <ng-container *ngIf="compra.status === 'EFETIVADA'">
-              <button class="btn-outline">Ver Detalhes</button>
+              <ng-container *ngIf="compra.status === 'EFETIVADA'">
+                <button class="btn-outline" 
+                 (click)="abrirModalEdicao(compra, $event)" 
+                [disabled]="carregandoDetalhesId === compra.id">
+               {{ carregandoDetalhesId === compra.id ? '⌛ Carregando...' : 'Ver Detalhes' }}
+                </button>
+              </ng-container>
             </ng-container>
           </td>
         </tr>
@@ -96,9 +102,17 @@
     </div>
   </div>
 </div>  
-      <div class="table-card mb-20">
+  <div class="table-card mb-20">
         <table>
-          <thead><tr><th>Produto</th><th>Qtd</th><th>Custo Unit.</th><th>Subtotal</th><th></th></tr></thead>
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Qtd</th>
+              <th>Custo Unit.</th>
+              <th>Subtotal</th>
+              <th *ngIf="novaCompra.status !== 'EFETIVADA'" class="text-center">Remover</th>
+            </tr>
+          </thead>
           <tbody>
             <tr *ngFor="let item of novaCompra.itens; let i = index">
               <td>
@@ -108,7 +122,10 @@
               <td>{{ item.quantidade }}</td>
               <td>{{ item.precoUnitario | currency:'BRL' }}</td>
               <td>{{ item.subtotal | currency:'BRL' }}</td>
-              <td><button class="btn-danger-sm" (click)="removerItemDaLista(i)">X</button></td>
+              
+              <td *ngIf="novaCompra.status !== 'EFETIVADA'" class="text-center">
+                <button class="btn-danger-sm" (click)="removerItemDaLista(i)">X</button>
+              </td>
             </tr>
           </tbody>
         </table>

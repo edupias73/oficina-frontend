@@ -1,0 +1,170 @@
+/* ==========================================
+   CONTAINER PRINCIPAL E CABEÇALHO
+========================================== */
+.compras-container {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+/* --- BARRA DE BUSCA (LUPA) --- */
+.input-group-lupa {
+  position: relative;
+  
+  input {
+    width: 100%;
+    padding: 12px 16px 12px 40px !important;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    font-size: 0.95rem;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+
+    &:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      outline: none;
+    }
+  }
+
+  &::before {
+    content: '🔍';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none;
+  }
+}
+
+/* ==========================================
+   TABELA DE ESTOQUE (A VITRINE)
+========================================== */
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f1f5f9;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  td {
+    padding: 16px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #1e293b;
+    vertical-align: middle;
+  }
+
+  tbody tr:hover {
+    background-color: #f8fafc;
+  }
+}
+
+/* ==========================================
+   CORES, ALERTAS E STATUS
+========================================== */
+/* Texto Base */
+.fw-bold { font-weight: 700; color: #0f172a; }
+.text-muted { color: #64748b; font-size: 0.9rem; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+/* Preço de Venda (Chama atenção no balcão) */
+.destaque-venda {
+  color: #0284c7;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+/* --- BADGES DE QUANTIDADE (QUADRADINHOS) --- */
+.qtd-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  min-width: 45px;
+  text-align: center;
+}
+
+/* Estoque Saudável */
+.qtd-ok { 
+  background-color: #f0fdf4; 
+  color: #16a34a; 
+  border: 1px solid #bbf7d0; 
+}
+
+/* Estoque Baixo / Crítico */
+.qtd-baixa { 
+  background-color: #fef2f2; 
+  color: #dc2626; 
+  border: 1px solid #fecaca; 
+  animation: piscar-leve 2s infinite alternate;
+}
+
+/* Destaca a linha inteira quando a peça está acabando */
+.linha-alerta { 
+  background-color: #fffbfa !important; 
+}
+
+/* --- BADGES DE TEXTO (STATUS) --- */
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  display: inline-block;
+}
+
+.badge-efetivada { 
+  background-color: #d1fae5; 
+  color: #059669; 
+}
+
+.badge-rascunho { 
+  background-color: #fee2e2; 
+  color: #b91c1c; 
+}
+
+/* Animação suave para peças acabando chamarem atenção */
+@keyframes piscar-leve {
+  from { opacity: 1; }
+  to { opacity: 0.85; }
+}
+
+/* Espaçamentos úteis */
+.mt-15 { margin-top: 15px; }
+.py-4 { padding-top: 1.5rem; padding-bottom: 1.5rem; }

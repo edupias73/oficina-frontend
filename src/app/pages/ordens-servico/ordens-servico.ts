@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-
 // Nossos Modelos
 import { OrdemServico, ItemPeca, ItemServico } from '../../models/ordem-servico.model';
 import { Cliente } from '../../models/cliente.model';
@@ -17,10 +16,11 @@ import { VeiculoService } from '../../services/veiculo.service'; // Assumindo qu
 import { MecanicoService } from '../../services/mecanico.service';
 import { ProdutoService } from '../../services/produto.service';
 
+
 @Component({
   selector: 'app-ordens-servico',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './ordens-servico.html',
   styleUrl: './ordens-servico.scss'
 })
@@ -33,7 +33,7 @@ export class OrdensServicoComponent implements OnInit {
   colunaAguardandoAprovacao: OrdemServico[] = [];
   colunaEmExecucao: OrdemServico[] = [];
   colunaAguardandoPeca: OrdemServico[] = [];
-  colunaPronta: OrdemServico[] = [];
+  colunaPronta: OrdemServico[] = [];  
 
   // --- VARIÁVEIS DO MODAL GIGANTE ---
   exibirModal: boolean = false;
@@ -53,10 +53,21 @@ export class OrdensServicoComponent implements OnInit {
   novaPeca: ItemPeca = { produtoId: 0, quantidade: 1, valorUnitario: 0 };
   novoServico: ItemServico = { descricao: '', valor: 0 };
 
+  // --- VARIÁVEIS DA BUSCA MASTER DE PEÇAS ---
+  produtosFiltradosBusca: Produto[] = [];
+  termoBuscaPeca = '';
+  mostrarResultadosBusca = false;
+
+  // --- VARIÁVEIS DO CLIENTE RÁPIDO ---
+  exibirModalClienteRapido: boolean = false;
+  novoClienteRapido: any = { nome: '', telefone: '', documento: '' };
+  salvandoClienteRapido: boolean = false;
+
   constructor(
+    
     private osService: OrdemServicoService,
     private clienteService: ClienteService,
-    private veiculoService: VeiculoService,
+    private veiculoService: VeiculoService, 
     private mecanicoService: MecanicoService,
     private produtoService: ProdutoService,
     private cdr: ChangeDetectorRef
@@ -124,17 +135,33 @@ export class OrdensServicoComponent implements OnInit {
     this.exibirModal = true;
   }
 
-  verDetalhes(os: OrdemServico) {
-    // Clona a O.S. para o modal (para não alterar a tela antes de salvar)
+verDetalhes(os: any) {
+    // 1. Clona a O.S.
     this.osEmEdicao = JSON.parse(JSON.stringify(os));
     
-    // Se não tiver listas, inicializa para não dar erro
-    if (!this.osEmEdicao.pecas) this.osEmEdicao.pecas = [];
-    if (!this.osEmEdicao.servicos) this.osEmEdicao.servicos = [];
+    // 2. Corrigindo os IDs para os selects (Barricada contra campos brancos)
+    this.osEmEdicao.clienteId = os.cliente?.id || os.clienteId;
+    this.osEmEdicao.veiculoId = os.veiculo?.id || os.veiculoId;
+    this.osEmEdicao.mecanicoId = os.mecanico?.id || os.mecanicoId;
     
-    this.aoSelecionarCliente(); // Filtra os carros do cliente
+    // 3. MAPEAMENTO LIMPO DAS PEÇAS: Agora o Java e o Angular falam a mesma língua
+    this.osEmEdicao.pecas = os.pecas ? os.pecas.map((p: any) => ({
+      id: p.id,
+      produtoId: p.produtoId,
+      nomeProduto: p.nomeProduto || 'Peça sem nome', 
+      quantidade: p.quantidade || 0,
+      valorUnitario: p.valorUnitario || 0,
+      subtotal: p.subtotal || (p.quantidade * (p.valorUnitario || 0))
+    })) : [];
+
+    // 4. Mapeia os serviços
+    this.osEmEdicao.servicos = os.servicos || [];
+    
+    // 5. Prepara e abre a tela
+    this.aoSelecionarCliente(); 
     this.abaAtual = 'dados';
     this.exibirModal = true;
+    this.cdr.detectChanges();
   }
 
   fecharModal() {
@@ -173,15 +200,14 @@ export class OrdensServicoComponent implements OnInit {
 
   adicionarPecaLista() {
     if (!this.novaPeca.produtoId || this.novaPeca.quantidade <= 0) {
-      alert('Selecione um produto e a quantidade!');
-      return;
+      alert('Pesquise e selecione uma peça primeiro!'); return;
     }
     
-    // Adiciona na lista temporária da O.S.
     this.osEmEdicao.pecas?.push({ ...this.novaPeca });
     
-    // Limpa os campos para a próxima peça
+    // Limpa a busca para a próxima peça
     this.novaPeca = { produtoId: 0, quantidade: 1, valorUnitario: 0 };
+    this.termoBuscaPeca = ''; // 👈 Limpa o campo de busca
     this.recalcularTotais();
   }
 
@@ -253,7 +279,7 @@ export class OrdensServicoComponent implements OnInit {
     }
   }
 
-  // (Manti a sua função do WhatsApp aqui no final)
+  // (função do WhatsApp aqui no final)
   enviarWhatsApp(os: OrdemServico, event: Event) {
     event.stopPropagation();
     let texto = `Olá ${os.cliente?.nome}, tudo bem? Aqui é da oficina.`;
@@ -265,4 +291,92 @@ export class OrdensServicoComponent implements OnInit {
     const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
     window.open(url, '_blank');
   }
+
+// ==========================================
+  // O MOTOR DA BUSCA MASTER (PEÇAS)
+  // ==========================================
+  filtrarPecasOS() {
+    if (!this.termoBuscaPeca || this.termoBuscaPeca.trim() === '') {
+      this.produtosFiltradosBusca = [];
+      this.mostrarResultadosBusca = false;
+      return;
+    }
+    this.mostrarResultadosBusca = true;
+    const termos = this.removerAcentos(this.termoBuscaPeca.toLowerCase()).split(' ').filter(t => t.trim() !== '');
+
+    this.produtosFiltradosBusca = this.listaProdutos.filter(p => {
+      const texto = this.removerAcentos(`${p.nome} ${p.codigoFabricante || ''} ${p.descricao || ''}`.toLowerCase());
+      return termos.every(t => texto.includes(t));
+    });
+  }
+
+  removerAcentos(texto: string): string {
+    if (!texto) return '';
+    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+selecionarPecaBusca(produto: Produto) {
+    this.novaPeca.produtoId = produto.id || 0;
+    this.novaPeca.nomeProduto = produto.nome;
+    this.novaPeca.valorUnitario = produto.precoVenda || 0; 
+    this.termoBuscaPeca = `${produto.nome} (Cód: ${produto.codigoFabricante || 'S/N'})`;
+    this.mostrarResultadosBusca = false;
+  }
+
+  
+// ==========================================
+  // ATALHO: CADASTRO DE CLIENTE RÁPIDO
+  // ==========================================
+  abrirModalClienteRapido() {
+    this.novoClienteRapido = { nome: '', telefone: '', documento: '' };
+    this.exibirModalClienteRapido = true;
+  }
+
+ salvarClienteRapido() {
+    if (!this.novoClienteRapido.nome) {
+      alert('Digite pelo menos o nome do cliente!');
+      return;
+    }
+    
+    if (!this.novoClienteRapido.telefone) {
+      alert('O telefone/WhatsApp é obrigatório!');
+      return;
+    }
+
+    // 🔴 1. LIGA A TRAVA E FORÇA O ECRÃ A ATUALIZAR NA HORA
+    this.salvandoClienteRapido = true;
+    this.cdr.detectChanges(); // Obriga o botão a mostrar "⏳ Salvando..." instantaneamente
+
+    const dadosParaEnviar: any = {
+      nome: this.novoClienteRapido.nome,
+      telefone: this.novoClienteRapido.telefone,
+      documento: this.novoClienteRapido.documento || null,
+      email: null 
+    };
+
+    this.clienteService.cadastrar(dadosParaEnviar).subscribe({
+      next: (clienteSalvo) => {
+        this.listaClientes.push(clienteSalvo);
+        this.osEmEdicao.clienteId = clienteSalvo.id;
+        
+        // 🟢 2. DESLIGA A TRAVA E FECHA O MODAL
+        this.salvandoClienteRapido = false;
+        this.exibirModalClienteRapido = false;
+        
+        this.aoSelecionarCliente();
+        
+        // Força a UI a esconder o modal imediatamente
+        this.cdr.detectChanges(); 
+      },
+      error: (err) => {
+        // 🟢 3. DESLIGA A TRAVA SE DER ERRO
+        this.salvandoClienteRapido = false;
+        this.cdr.detectChanges();
+        
+        console.error('ERRO DO JAVA:', err);
+        alert('O Java recusou o cadastro! Aperte F12 para ver o motivo no console.');
+      }
+    });
+  }
 }
+

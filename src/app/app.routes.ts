@@ -12,9 +12,8 @@ import { Usuarios } from './pages/usuarios/usuarios';
 import { ComprasComponent } from './pages/compras/compras';
 import { FornecedoresComponent } from './pages/fornecedores/fornecedores';
 import { RegistroComponent } from './pages/registro/registro';
-// 👇 AJUSTE O CAMINHO: Se o seu authGuard está em core/guards,
-// coloque o adminGuard lá também para não dar erro de pasta!
 import { adminGuard } from './core/guards/admin.guard';
+import { EstoqueComponent } from './estoque/estoque';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -34,8 +33,9 @@ export const routes: Routes = [
       { path: 'produtos', component: Produtos },
       { path: 'compras', component: ComprasComponent, canActivate: [authGuard] },
       { path: 'fornecedores', component: FornecedoresComponent, canActivate: [authGuard] },
+      { path: 'estoque', component: EstoqueComponent, canActivate: [authGuard] },
 
-      // 👇 ÁREA PROTEGIDA: Só o ADMIN entra aqui
+      //  ÁREA PROTEGIDA: Só o ADMIN entra aqui
       { path: 'mecanicos', component: Mecanicos, canActivate: [adminGuard] },
       { path: 'usuarios', component: Usuarios, canActivate: [adminGuard] },
     ],

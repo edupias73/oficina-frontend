@@ -80,15 +80,23 @@ export class ClientesComponent implements OnInit {
       return;
     }
 
-    this.http.post('http://localhost:8080/clientes', this.dadosNovoCliente).subscribe({
-      next: (clienteCriado) => {
+    // 🛡️ A CORREÇÃO: Transforma texto vazio em 'null' para o banco de dados aceitar
+    const dadosParaEnviar = {
+      nome: this.dadosNovoCliente.nome,
+      telefone: this.dadosNovoCliente.telefone,
+      documento: this.dadosNovoCliente.documento || null,
+      email: this.dadosNovoCliente.email || null
+    };
+
+    this.http.post('http://localhost:8080/clientes', dadosParaEnviar).subscribe({
+      next: () => {
         alert('✅ Cliente cadastrado com sucesso!');
         this.fecharModalCadastro();
         this.carregarClientes(); // Atualiza a lista
       },
       error: (erro) => {
         console.error(erro);
-        alert('Erro ao cadastrar. Verifique se o CPF/CNPJ já não existe.');
+        alert('Erro ao cadastrar. Verifique se o CPF/CNPJ já não existe no sistema.');
       }
     });
   }
