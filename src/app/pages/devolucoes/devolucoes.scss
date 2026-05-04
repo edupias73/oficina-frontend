@@ -1,0 +1,230 @@
+// Variáveis de Cor (Padrão Tailwind)
+$primary: #0ea5e9;
+$primary-hover: #0284c7;
+$success: #16a34a;
+$success-hover: #15803d;
+$text-main: #334155;
+$text-muted: #64748b;
+$bg-light: #f8fafc;
+$border-color: #e2e8f0;
+.badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+.badge-efetivada { background-color: #dcfce7; color: #059669; border: 1px solid #a7f3d0; }
+.badge-rascunho { background-color: #ffedd5; color: #d97706; border: 1px solid #fde68a; }
+// Animação de entrada cabulosa
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.compras-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeSlideUp 0.4s ease-out;
+
+  .header-actions {
+    margin-bottom: 2rem;
+    border-bottom: 2px solid $border-color;
+    padding-bottom: 1rem;
+
+    h2 {
+      font-size: 1.8rem;
+      color: $text-main;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+}
+
+// O Input de Busca Master
+.input-group-lupa {
+  input {
+    transition: all 0.3s ease;
+    background-color: #fff;
+    
+    &:focus {
+      border-color: $primary !important;
+      box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2) !important;
+      transform: scale(1.01);
+    }
+    
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+}
+
+// Estilo dos Cards e Tabelas
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+  border: 1px solid $border-color;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+
+    thead {
+      background-color: $bg-light;
+      border-bottom: 2px solid $border-color;
+
+      th {
+        padding: 1rem;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $text-muted;
+        font-weight: 700;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid $border-color;
+        transition: all 0.2s ease;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        // Efeito Hover cabuloso nas linhas
+        &:hover {
+          background-color: #f0f9ff; // Fundo azul bem claro
+          transform: translateX(4px); // Linha dá um "pulinho" pra direita
+          border-left: 3px solid $primary;
+        }
+
+        td {
+          padding: 1rem;
+          color: $text-main;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+}
+
+// Classes utilitárias que usamos no HTML
+.mt-15 { margin-top: 1.5rem; }
+.text-muted { color: $text-muted; }
+.text-center { text-align: center; }
+.fw-bold { font-weight: 600; }
+
+// Botões
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-outline-primary {
+  background: transparent;
+  border: 2px solid $primary;
+  color: $primary;
+  padding: 8px 16px;
+  font-weight: 600;
+
+  &:hover {
+    background: $primary;
+    color: white;
+  }
+}
+
+// Estilo dos inputs no Passo 2
+input[type="number"], input[type="text"] {
+  transition: border-color 0.2s, box-shadow 0.2s;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary !important;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+  }
+}
+
+// Grid para os Radio Cards
+.radio-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+// Estilo de cada Card
+.radio-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fff;
+
+  // Esconde a bolinha padrão do rádio
+  input[type="radio"] {
+    display: none;
+  }
+
+  .icon {
+    font-size: 1.5rem;
+  }
+
+  .content {
+    h4 {
+      margin: 0 0 3px 0;
+      font-size: 0.95rem;
+      color: #334155;
+    }
+    p {
+      margin: 0;
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+  }
+
+  // Efeito quando passa o rato
+  &:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+  }
+
+  // EFEITO QUANDO ESTÁ SELECIONADO!
+  &.active {
+    border-color: #0ea5e9;
+    background: #f0f9ff;
+    box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.1);
+    
+    h4 {
+      color: #0284c7;
+    }
+  }
+}
+
+// Cores para os ícones
+.text-success { color: #16a34a; }
+.text-warning { color: #d97706; }
+.text-danger { color: #dc2626; }
+.text-primary { color: #0ea5e9; }

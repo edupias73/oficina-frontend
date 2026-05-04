@@ -13,7 +13,9 @@ import { ComprasComponent } from './pages/compras/compras';
 import { FornecedoresComponent } from './pages/fornecedores/fornecedores';
 import { RegistroComponent } from './pages/registro/registro';
 import { adminGuard } from './core/guards/admin.guard';
-import { EstoqueComponent } from './estoque/estoque';
+import { EstoqueComponent } from './pages/estoque/estoque';
+import { DevolucoesComponent } from './pages/devolucoes/devolucoes';
+import { AcertosComponent } from './pages/acertos/acertos';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -34,10 +36,12 @@ export const routes: Routes = [
       { path: 'compras', component: ComprasComponent, canActivate: [authGuard] },
       { path: 'fornecedores', component: FornecedoresComponent, canActivate: [authGuard] },
       { path: 'estoque', component: EstoqueComponent, canActivate: [authGuard] },
+      { path: 'acertos', component: AcertosComponent, canActivate: [authGuard] },
 
       //  ÁREA PROTEGIDA: Só o ADMIN entra aqui
       { path: 'mecanicos', component: Mecanicos, canActivate: [adminGuard] },
       { path: 'usuarios', component: Usuarios, canActivate: [adminGuard] },
+      { path: 'devolucoes', component: DevolucoesComponent, canActivate: [authGuard] },
     ],
   },
 

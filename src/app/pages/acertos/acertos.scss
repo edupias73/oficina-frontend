@@ -1,0 +1,204 @@
+/* --- CONTAINER PRINCIPAL --- */
+.page-container {
+  padding: 24px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* --- BARRA DO TOPO --- */
+.page-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .toolbar-left {
+    h1 { margin: 0; font-size: 1.8rem; color: #2b2d42; }
+    p { margin: 5px 0 0 0; color: #8d99ae; }
+  }
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  /* Campo de Busca Moderno */
+  .search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .icon {
+      position: absolute;
+      left: 12px;
+      color: #94a3b8;
+      font-size: 1rem;
+    }
+
+    input {
+      padding: 10px 10px 10px 35px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #334155;
+      width: 300px;
+      transition: all 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        width: 330px;
+      }
+    }
+  }
+}
+
+/* --- TABELA E CARDS --- */
+.card-table {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+  animation: fadeIn 0.3s ease;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      padding: 16px 20px;
+      text-align: left;
+      border-bottom: 1px solid #edf2f7;
+      color: #334155;
+    }
+
+    th {
+      background-color: #f8fafc;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+
+    .fw-bold { font-weight: 600; color: #1e293b; }
+    .text-muted { color: #94a3b8; }
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .py-4 { padding: 30px; }
+
+    tr:hover { background-color: #f1f5f9; }
+  }
+}
+
+/* --- BOTÕES --- */
+.btn-primary {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(14, 165, 233, 0.2);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(14, 165, 233, 0.3);
+  }
+}
+
+.btn-cancelar {
+  background-color: #f1f5f9;
+  color: #475569;
+  &:hover { background-color: #e2e8f0; }
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s;
+  opacity: 0.7;
+  &:hover { opacity: 1; transform: scale(1.2); }
+}
+
+/* --- FORMULÁRIOS NO CARD DE AJUSTE --- */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+}
+
+.grupo-form {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #475569;
+    font-size: 0.95rem;
+  }
+
+  .input-padrao {
+    padding: 12px 15px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #334155;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+    }
+  }
+}
+
+/* --- RADIO CARDS --- */
+.radio-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.radio-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fff;
+
+  input[type="radio"] { display: none; }
+
+  .icon { font-size: 1.8rem; }
+
+  .content {
+    h4 { margin: 0 0 5px 0; font-size: 1.05rem; color: #334155; }
+    p { margin: 0; font-size: 0.85rem; color: #64748b; }
+  }
+
+  &:hover { border-color: #cbd5e1; background: #f8fafc; }
+
+  &.active {
+    border-color: #0ea5e9;
+    background: #f0f9ff;
+    box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.1);
+    h4 { color: #0284c7; }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

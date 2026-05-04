@@ -71,11 +71,11 @@
 
    <nav class="nav-links" *ngIf="moduloAtivo === 'estoque'">
         <a routerLink="/estoque" routerLinkActive="active"> Estoque Atual</a>
-      
-        
         <a routerLink="/compras" routerLinkActive="active">Entrada NF</a>
+        <a routerLink="/devolucoes" routerLinkActive="active"> Devoluções</a>
+        <a routerLink="/acertos" routerLinkActive="active"> Acertos</a>
         
-        <span class="disabled">Baixa Manual</span>
+
       </nav>
 
       <nav class="nav-links" *ngIf="moduloAtivo === 'financeiro'">
