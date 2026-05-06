@@ -8,7 +8,7 @@ import { Veiculo } from '../models/veiculo.model';
 })
 export class VeiculoService {
   
-  private readonly API = 'http://localhost:8080/veiculos';
+  private readonly API = '[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/veiculos';
 
   constructor(private http: HttpClient) { }
 

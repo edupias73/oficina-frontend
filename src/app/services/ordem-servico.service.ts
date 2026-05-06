@@ -9,7 +9,7 @@ import { OrdemServico } from '../models/ordem-servico.model';
 export class OrdemServicoService {
 
   // Confirma se o teu Controller no Java está mapeado com este nome exato
-  private readonly API = 'http://localhost:8080/ordens-servico'; 
+  private readonly API = '[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/ordens-servico'; 
 
   constructor(private http: HttpClient) { }
 

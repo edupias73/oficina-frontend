@@ -9,7 +9,7 @@ import { Usuario } from '../models/usuario.model';
 export class UsuarioService {
   
   // Confirme se a sua porta do Java é a 8080 mesmo
-  private apiUrl = 'http://localhost:8080/usuarios';
+  private apiUrl = '[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/usuarios';
 
   constructor(private http: HttpClient) {}
 

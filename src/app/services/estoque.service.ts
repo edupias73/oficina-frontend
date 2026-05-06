@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class EstoqueService {
-  private readonly API = 'http://localhost:8080/estoque';
+  private readonly API = '[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/estoque';
 
   constructor(private http: HttpClient) { }
 

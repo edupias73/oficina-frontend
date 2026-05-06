@@ -41,7 +41,7 @@ export class FornecedoresComponent implements OnInit {
 
   // --- LISTAGEM E PESQUISA ---
   carregarFornecedores() {
-    this.http.get<any[]>('http://localhost:8080/fornecedores').subscribe({
+    this.http.get<any[]>('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/fornecedores').subscribe({
       next: (dados) => {
         this.listaFornecedores = dados;
         this.listaCompleta = dados;
@@ -97,7 +97,7 @@ export class FornecedoresComponent implements OnInit {
 
     if (this.modoEdicao) {
       // ATUALIZAR
-      this.http.put('http://localhost:8080/fornecedores', this.fornecedorAtual).subscribe({
+      this.http.put('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/fornecedores', this.fornecedorAtual).subscribe({
         next: () => {
           alert('✅ Fornecedor atualizado com sucesso!');
           this.fecharModal();
@@ -107,7 +107,7 @@ export class FornecedoresComponent implements OnInit {
       });
     } else {
       // NOVO CADASTRO
-      this.http.post('http://localhost:8080/fornecedores', this.fornecedorAtual).subscribe({
+      this.http.post('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/fornecedores', this.fornecedorAtual).subscribe({
         next: () => {
           alert('🏢 Fornecedor cadastrado com sucesso!');
           this.fecharModal();
@@ -125,7 +125,7 @@ export class FornecedoresComponent implements OnInit {
         'Tem a certeza que deseja excluir este fornecedor? Ele vai sumir da lista, mas as compras antigas continuarão salvas.',
       )
     ) {
-      this.http.delete(`http://localhost:8080/fornecedores/${id}`).subscribe({
+      this.http.delete(`[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/fornecedores/${id}`).subscribe({
         next: () => {
           this.carregarFornecedores();
         },

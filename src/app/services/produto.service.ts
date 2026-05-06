@@ -8,7 +8,7 @@ import { Produto } from '../models/produto.model'; // Confirma se o caminho est√
 })
 export class ProdutoService {
 
-  private readonly API = 'http://localhost:8080/produtos';
+  private readonly API = '[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/produtos';
 
   constructor(private http: HttpClient) { }
 
