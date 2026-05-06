@@ -6,29 +6,38 @@
       <p>Gerencie mercadorias devolvidas por clientes ou enviadas a fornecedores.</p>
     </div>
     <div class="toolbar-actions">
-      <!-- O Botão que troca da Tabela para o Formulário -->
       <button class="btn-primary" *ngIf="!modoNovaDevolucao" (click)="iniciarNovaDevolucao()">
-        <span>+</span> Nova Devolução
+        <i class="fas fa-plus"></i> Nova Devolução
       </button>
       <button class="btn-cancelar" *ngIf="modoNovaDevolucao" (click)="cancelarNovaDevolucao()">
-        Voltar ao Histórico
+        <i class="fas fa-arrow-left"></i> Voltar ao Histórico
       </button>
     </div>
   </div>
 
-  <div *ngIf="carregando" class="text-center py-4 text-muted">
-    <h3>⏳ A consultar o histórico...</h3>
+  <div *ngIf="carregando" class="loading-state">
+    <div class="spinner"></div>
+    <h3>A consultar o histórico...</h3>
   </div>
 
-  <!-- ============================================== -->
-  <!-- 1. TELA DE HISTÓRICO (Livro-Razão)           -->
-  <!-- ============================================== -->
   <div class="content-area" *ngIf="!modoNovaDevolucao && !carregando">
-    <div class="card-table">
-      <table>
+    
+    <div *ngIf="listaHistorico.length === 0" class="empty-state-container">
+      <div class="empty-state-card">
+        <div class="icon-wrapper">📦</div>
+        <h2>Nenhuma devolução registada</h2>
+        <p>O histórico de peças devolvidas ou com defeito aparecerá aqui.</p>
+        <button class="btn-primary" (click)="iniciarNovaDevolucao()">
+          Começar Nova Devolução
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="listaHistorico.length > 0" class="card-table-container">
+      <table class="premium-table">
         <thead>
           <tr>
-            <th>ID (Controle)</th>
+            <th>ID</th>
             <th>Data e Hora</th>
             <th>Produto (Peça)</th>
             <th>Tipo</th>
@@ -40,95 +49,88 @@
           <tr *ngFor="let mov of listaHistorico">
             <td class="text-muted fw-bold">#{{ mov.id }}</td>
             <td>{{ mov.dataMovimentacao | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td class="fw-bold">{{ mov.produto?.nome }}</td>
+            <td class="fw-bold text-dark">{{ mov.produto?.nome }}</td>
             <td>
-              <span class="badge" [ngClass]="mov.tipo === 'DEVOLUCAO_CLIENTE' ? 'badge-efetivada' : 'badge-rascunho'">
-                {{ mov.tipo === 'DEVOLUCAO_CLIENTE' ? 'Retorno do Cliente (+)' : 'Envio ao Fornecedor (-)' }}
+              <span class="status-badge" [ngClass]="mov.tipo === 'DEVOLUCAO_CLIENTE' ? 'badge-in' : 'badge-out'">
+                {{ mov.tipo === 'DEVOLUCAO_CLIENTE' ? 'Retorno (+)' : 'Fornecedor (-)' }}
               </span>
             </td>
             <td class="text-center fw-bold">{{ mov.quantidade }} un.</td>
-            <td class="text-muted">"{{ mov.motivo }}"</td>
-          </tr>
-          <tr *ngIf="listaHistorico.length === 0">
-            <td colspan="6" class="text-center py-4 text-muted">Nenhuma devolução registada no histórico.</td>
+            <td class="text-muted">{{ mov.motivo }}</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- ============================================== -->
-  <!-- 2. TELA DE NOVA DEVOLUÇÃO (O Formulário)       -->
-  <!-- ============================================== -->
   <div class="content-area" *ngIf="modoNovaDevolucao">
     
-    <!-- Busca Master -->
-    <div *ngIf="!produtoSelecionado">
-      <div class="input-group-lupa" style="position: relative;">
+    <div *ngIf="!produtoSelecionado" class="search-section">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
         <input type="text" [(ngModel)]="termoBusca" (input)="filtrar()" 
-               placeholder="🔍 Digite o nome ou código da peça a devolver..." 
-               style="width: 100%; padding: 15px; border-radius: 8px; border: 2px solid #0ea5e9; outline: none; font-size: 1.1rem; box-shadow: 0 4px 6px rgba(14, 165, 233, 0.1);">
+               placeholder="Digite o nome ou código da peça a devolver...">
       </div>
 
-      <div class="table-card mt-15" *ngIf="produtosFiltrados.length > 0">
-        <table>
+      <div class="card-table-container mt-4" *ngIf="produtosFiltrados.length > 0">
+        <table class="premium-table search-table">
           <tr *ngFor="let p of produtosFiltrados">
-            <td><b>{{ p.nome }}</b> <br> <small class="text-muted">{{ p.codigoFabricante }}</small></td>
+            <td>
+              <span class="item-name">{{ p.nome }}</span>
+              <span class="item-code">{{ p.codigoFabricante }}</span>
+            </td>
             <td class="text-right">
-              <button class="btn btn-sm btn-outline-primary" (click)="selecionarProduto(p)">Selecionar para Devolução</button>
+              <button class="btn-outline" (click)="selecionarProduto(p)">Selecionar</button>
             </td>
           </tr>
         </table>
       </div>
     </div>
 
-    <!-- O Cartão do Formulário -->
-    <div *ngIf="produtoSelecionado" class="table-card" style="padding: 30px; border-left: 5px solid #16a34a; max-width: 800px; margin: 0 auto;">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
-        <div>
-          <h3 style="margin:0">Devolver Peça: <span style="color: #0ea5e9;">{{ produtoSelecionado.nome }}</span></h3>
-          <p class="text-muted" style="margin: 5px 0 0 0;">Saldo Atual no Estoque: <b>{{ produtoSelecionado.quantidadeEstoque }} unidades</b></p>
+    <div *ngIf="produtoSelecionado" class="form-action-card">
+      <div class="form-header">
+        <div class="product-info">
+          <h3>Devolver: <span>{{ produtoSelecionado.nome }}</span></h3>
+          <p>Saldo Atual no Estoque: <b>{{ produtoSelecionado.quantidadeEstoque }} unidades</b></p>
         </div>
-        <button class="btn btn-sm" (click)="produtoSelecionado = null">Trocar Peça ✖</button>
+        <button class="btn-icon" (click)="produtoSelecionado = null" title="Trocar Peça">✖</button>
       </div>
 
-      <!-- Radio Cards -->
-      <div class="radio-cards-grid" style="margin-bottom: 25px;">
+      <div class="radio-cards-grid">
         <label class="radio-card" [class.active]="tipoMovimentoSelecionado === 'DEVOLUCAO_CLIENTE'">
           <input type="radio" name="tipo" value="DEVOLUCAO_CLIENTE" [(ngModel)]="tipoMovimentoSelecionado">
-          <span class="icon" style="color: #16a34a;">📦</span>
-          <div class="content">
-            <h4>Voltou do Cliente (+)</h4>
-            <p>Retorna ao seu estoque</p>
+          <div class="card-icon in">📥</div>
+          <div class="card-content">
+            <h4>Voltou do Cliente</h4>
+            <p>Retorna ao seu estoque (+)</p>
           </div>
         </label>
 
         <label class="radio-card" [class.active]="tipoMovimentoSelecionado === 'DEVOLUCAO_FORNECEDOR'">
           <input type="radio" name="tipo" value="DEVOLUCAO_FORNECEDOR" [(ngModel)]="tipoMovimentoSelecionado">
-          <span class="icon" style="color: #d97706;">🚚</span>
-          <div class="content">
-            <h4>Envio ao Fornecedor (-)</h4>
-            <p>Sai do seu estoque</p>
+          <div class="card-icon out">📤</div>
+          <div class="card-content">
+            <h4>Envio ao Fornecedor</h4>
+            <p>Sai do seu estoque (-)</p>
           </div>
         </label>
       </div>
 
-      <!-- Quantidade e Motivo -->
-      <div class="form-grid" style="margin-bottom: 20px;">
-        <div class="grupo-form">
-          <label><b>Qtd a Devolver:</b></label>
-          <input type="number" [(ngModel)]="quantidadeDevolvida" class="input-padrao" style="text-align: center; font-size: 1.2rem; font-weight: bold;">
+      <div class="form-inputs-grid">
+        <div class="input-group">
+          <label>Qtd a Devolver:</label>
+          <input type="number" [(ngModel)]="quantidadeDevolvida" class="input-modern amount-input" min="1">
         </div>
-        <div class="grupo-form">
-          <label><b>Motivo (Histórico):</b></label>
-          <input type="text" [(ngModel)]="motivoDevolucao" placeholder="Ex: Cliente desistiu da O.S., Peça defeituosa..." class="input-padrao">
+        <div class="input-group">
+          <label>Motivo da Devolução:</label>
+          <input type="text" [(ngModel)]="motivoDevolucao" placeholder="Ex: Peça defeituosa, desistência..." class="input-modern">
         </div>
       </div>
 
-      <button class="btn mt-15" style="width: 100%; background: #16a34a; color: white; padding: 15px; font-weight: bold; font-size: 1.1rem; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(22,163,74,0.3);" (click)="confirmarDevolucao()">
+      <button class="btn-success-large" (click)="confirmarDevolucao()">
         ✅ Efetivar Devolução
       </button>
     </div>
-
   </div>
-</div>  
+
+</div>
