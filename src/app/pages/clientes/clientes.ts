@@ -36,7 +36,7 @@ export class ClientesComponent implements OnInit {
 
   // --- LISTAGEM ---
   carregarClientes() {
-    this.http.get<any[]>('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/clientes').subscribe({
+    this.http.get<any[]>('https://oficina-backend-production-1f8e.up.railway.app/clientes').subscribe({
       next: (dados) => {
         this.listaClientes = dados;
         this.listaCompleta = dados;
@@ -88,7 +88,7 @@ export class ClientesComponent implements OnInit {
       email: this.dadosNovoCliente.email || null
     };
 
-    this.http.post('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/clientes', dadosParaEnviar).subscribe({
+    this.http.post('https://oficina-backend-production-1f8e.up.railway.app/clientes', dadosParaEnviar).subscribe({
       next: () => {
         alert('✅ Cliente cadastrado com sucesso!');
         this.fecharModalCadastro();
@@ -112,7 +112,7 @@ export class ClientesComponent implements OnInit {
   }
 
   salvarEdicao() {
-    this.http.put('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/clientes', this.clienteEmEdicao).subscribe({
+    this.http.put('https://oficina-backend-production-1f8e.up.railway.app/clientes', this.clienteEmEdicao).subscribe({
       next: () => {
         alert('✅ Cliente atualizado!');
         this.fecharModal();
@@ -124,7 +124,7 @@ export class ClientesComponent implements OnInit {
 
   excluirCliente(id: number) {
     if (confirm('Tem certeza? Isso pode apagar histórico de O.S.!')) {
-      this.http.delete(`[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/clientes/${id}`).subscribe({
+      this.http.delete(`https://oficina-backend-production-1f8e.up.railway.app/clientes/${id}`).subscribe({
         next: () => this.carregarClientes(),
         error: () => alert('Não foi possível excluir (possui vínculos).')
       });

@@ -8,7 +8,7 @@ import { Veiculo } from '../models/veiculo.model';
 })
 export class VeiculoService {
   
-  private readonly API = '[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/veiculos';
+  private readonly API = 'https://oficina-backend-production-1f8e.up.railway.app/veiculos';
 
   constructor(private http: HttpClient) { }
 

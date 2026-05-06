@@ -37,7 +37,7 @@ export class AcertosComponent implements OnInit {
 
   carregarProdutos() {
     this.carregando = true;
-    this.http.get<any[]>('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/produtos').subscribe({
+    this.http.get<any[]>('https://oficina-backend-production-1f8e.up.railway.app/produtos').subscribe({
       next: (dados) => {
         this.listaProdutos = dados || [];
         this.produtosFiltrados = [...this.listaProdutos]; // 👈 AQUI: Mostra tudo por padrão!
