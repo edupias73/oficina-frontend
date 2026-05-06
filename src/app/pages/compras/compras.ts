@@ -66,15 +66,15 @@ export class ComprasComponent implements OnInit {
   }
 
   carregarCompras() {
-    this.http.get<any[]>('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/compras').subscribe(dados => { this.listaCompras = dados; this.cd.detectChanges(); });
+    this.http.get<any[]>('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/compras').subscribe(dados => { this.listaCompras = dados; this.cd.detectChanges(); });
   }
 
   carregarFornecedores() {
-    this.http.get<any[]>('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/fornecedores').subscribe(dados => this.listaFornecedores = dados);
+    this.http.get<any[]>('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/fornecedores').subscribe(dados => this.listaFornecedores = dados);
   }
 
   carregarProdutos() {
-    this.http.get<any[]>('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/produtos').subscribe(dados => { this.listaProdutos = dados; this.produtosFiltrados = dados; });
+    this.http.get<any[]>('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/produtos').subscribe(dados => { this.listaProdutos = dados; this.produtosFiltrados = dados; });
   }
 
   // --- CONTROLE DA COMPRA ---
@@ -97,7 +97,7 @@ abrirModalEdicao(resumo: any, event?: Event) {
     this.carregandoDetalhesId = resumo.id;
     this.cd.detectChanges();
 
-    this.http.get<any>(`[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/compras/${resumo.id}`).subscribe({
+    this.http.get<any>(`[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/compras/${resumo.id}`).subscribe({
       next: (compra) => {
         this.novaCompra = {
           id: compra.id,
@@ -166,7 +166,7 @@ fecharModal() {
     };
 
     if (this.novaCompra.id) {
-      this.http.put(`[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/compras/${this.novaCompra.id}`, dadosParaOJava).subscribe({
+      this.http.put(`[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/compras/${this.novaCompra.id}`, dadosParaOJava).subscribe({
         next: () => { if (!silencioso) alert('📝 Atualizado!'); this.modalAberto = false; this.carregarCompras(); },
         error: (err) => { 
           console.error(err); 
@@ -174,7 +174,7 @@ fecharModal() {
         }
       });
     } else {
-      this.http.post('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/compras', dadosParaOJava).subscribe({
+      this.http.post('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/compras', dadosParaOJava).subscribe({
         next: () => { if (!silencioso) alert('📝 Salvo!'); this.modalAberto = false; this.carregarCompras(); },
         error: (err) => { 
           console.error(err); 
@@ -187,7 +187,7 @@ fecharModal() {
   efetivarCompra(id: number, event: Event) {
     event.stopPropagation(); // Bloqueia o clique de abrir a nota
     if (confirm('Lançar as peças no estoque e alterar preços de custo?')) {
-      this.http.put(`[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/compras/${id}/efetivar`, {}).subscribe({
+      this.http.put(`[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/compras/${id}/efetivar`, {}).subscribe({
         next: () => { alert('✅ Efetivada!'); this.carregarCompras(); }
       });
     }
@@ -196,7 +196,7 @@ fecharModal() {
   excluirCompra(id: number, event: Event) {
     event.stopPropagation(); // Bloqueia o clique
     if (confirm('Excluir rascunho?')) {
-      this.http.delete(`[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/compras/${id}`).subscribe({ next: () => this.carregarCompras() });
+      this.http.delete(`[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/compras/${id}`).subscribe({ next: () => this.carregarCompras() });
     }
   }
 
@@ -231,7 +231,7 @@ fecharModal() {
 
   salvarNovoProduto() {
     if (!this.novoProduto.nome) return;
-    this.http.post<any>('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/produtos', this.novoProduto).subscribe({
+    this.http.post<any>('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/produtos', this.novoProduto).subscribe({
       next: (produtoCriado) => {
         this.carregarProdutos();
         this.confirmarProdutoBusca(produtoCriado);

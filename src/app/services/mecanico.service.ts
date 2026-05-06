@@ -11,7 +11,7 @@ import { Mecanico } from '../models/mecanico.model';
 export class MecanicoService {
 
   // Confirme se a porta do Java é 8080
-  private readonly API = '[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/mecanicos';
+  private readonly API = '[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/mecanicos';
 
   constructor(private http: HttpClient) { }
 

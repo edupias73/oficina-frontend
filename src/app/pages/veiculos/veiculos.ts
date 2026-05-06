@@ -34,7 +34,7 @@ export class VeiculosComponent implements OnInit {
   }
 
   carregarFrota() {
-    this.http.get<any[]>('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/veiculos').subscribe({
+    this.http.get<any[]>('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/veiculos').subscribe({
       next: (dados) => {
         this.listaVeiculos = dados;
         this.listaCompleta = dados;
@@ -44,7 +44,7 @@ export class VeiculosComponent implements OnInit {
   }
 
   carregarClientes() {
-    this.http.get<any[]>('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/clientes').subscribe(d => this.listaClientes = d);
+    this.http.get<any[]>('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/clientes').subscribe(d => this.listaClientes = d);
   }
 
   filtrarVeiculos() {
@@ -73,7 +73,7 @@ export class VeiculosComponent implements OnInit {
       alert('Preencha a placa e escolha o dono!');
       return;
     }
-    this.http.post('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/veiculos', this.dadosNovoVeiculo).subscribe({
+    this.http.post('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/veiculos', this.dadosNovoVeiculo).subscribe({
       next: () => {
         alert('🚗 Veículo cadastrado!');
         this.fecharModalCadastro();
@@ -91,7 +91,7 @@ export class VeiculosComponent implements OnInit {
   fecharModalEdicao() { this.modalEdicaoAberto = false; }
 
   salvarEdicao() {
-    this.http.put('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/veiculos', this.veiculoEmEdicao).subscribe({
+    this.http.put('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/veiculos', this.veiculoEmEdicao).subscribe({
       next: () => {
         alert('✅ Veículo atualizado!');
         this.fecharModalEdicao();
@@ -103,7 +103,7 @@ export class VeiculosComponent implements OnInit {
 
   excluirVeiculo(id: number) {
     if(confirm('Excluir este veículo?')) {
-      this.http.delete(`[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/veiculos/${id}`).subscribe(() => this.carregarFrota());
+      this.http.delete(`[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/veiculos/${id}`).subscribe(() => this.carregarFrota());
     }
   }
 }

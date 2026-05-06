@@ -38,7 +38,7 @@ export class EstoqueComponent implements OnInit {
 
   carregarEstoque() {
     this.carregando = true;
-    this.http.get<any[]>('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/produtos').subscribe({
+    this.http.get<any[]>('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/produtos').subscribe({
       next: (dados) => {
         this.listaProdutos = dados || [];
         // Se houver busca ativa, mantemos o filtro. Se não, mostra tudo.

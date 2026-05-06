@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
   // O endereço do seu Java
-  private apiUrl = '[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/auth';
+  private apiUrl = '[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/auth';
 
   constructor(
     private http: HttpClient,

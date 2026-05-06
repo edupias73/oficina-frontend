@@ -59,7 +59,7 @@ export class DevolucoesComponent implements OnInit {
     
     // Aproveita para puxar as peças para a busca
     if (this.listaProdutos.length === 0) {
-      this.http.get<any[]>('[https://oficina-backend-production-1f8e.up.railway.app](https://oficina-backend-production-1f8e.up.railway.app)/produtos').subscribe(d => this.listaProdutos = d || []);
+      this.http.get<any[]>('[https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app](https://https://oficina-backend-production-1f8e.up.railway.app-1f8e.up.railway.app)/produtos').subscribe(d => this.listaProdutos = d || []);
     }
   }
 
